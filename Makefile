@@ -31,15 +31,18 @@ CFLAGS := \
 	@mkdir -p $(@D)
 	ibtool --compile $@ $<
 
+# Mimic what Safari Technology Preview does, i.e. just embed DYLD_FRAMEWORK_PATH and DYLD_LIBRARY_PATH into the main binary.
 MiniBrowser: $(OBJS)
 	@echo LD $@
 	@mkdir -p $(@D)
-	cc $(CFLAGS) -o build/$@ $(OBJS)
+	cc $(CFLAGS) -Wl,-dyld_env,DYLD_FRAMEWORK_PATH=@loader_path/../Frameworks -Wl,-dyld_env,DYLD_LIBRARY_PATH=@loader_path/../Frameworks -o build/$@ $(OBJS)
 
 MiniBrowser.app: MiniBrowser $(NIBS)
 	@mkdir -p MiniBrowser.app/Contents/MacOS
+	@mkdir -p MiniBrowser.app/Contents/Frameworks
 	@mkdir -p MiniBrowser.app/Contents/Resources
 	cp build/MiniBrowser MiniBrowser.app/Contents/MacOS
-	cp Info.plist MiniBrowser.app/Contents/
+	cp -a "$(WEBKIT_FRAMEWORK_PATH)"/* MiniBrowser.app/Contents/Frameworks
 	cp $(NIBS) MiniBrowser.app/Contents/Resources
+	cp Info.plist MiniBrowser.app/Contents/
 	printf 'APPL????' > MiniBrowser.app/Contents/PkgInfo
