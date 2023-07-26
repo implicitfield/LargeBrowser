@@ -50,6 +50,7 @@
     self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
 
     [share sendActionOn:NSEventMaskLeftMouseDown];
+    [[self window] makeFirstResponder:urlText];
     [super windowDidLoad];
 }
 

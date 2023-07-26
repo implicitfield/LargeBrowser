@@ -38,8 +38,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
-static const NSString * const kURLArgumentString = @"--url";
-
 @implementation NSApplication (MiniBrowserApplicationExtensions)
 
 - (BrowserAppDelegate *)browserAppDelegate
@@ -154,20 +152,6 @@ static WKWebsiteDataStore *persistentDataStore(void)
     [_browserWindowControllers addObject:controller];
 
     return controller;
-}
-
-- (NSString *)targetURLOrDefaultURL
-{
-    NSArray *args = [[NSProcessInfo processInfo] arguments];
-    const NSUInteger targetURLIndex = [args indexOfObject:kURLArgumentString];
-    NSString *targetURL = nil;
-
-    if (targetURLIndex != NSNotFound && targetURLIndex + 1 < [args count])
-        targetURL = [args objectAtIndex:targetURLIndex + 1];
-
-    if (!targetURL || [targetURL isEqualToString:@""])
-        return _settingsController.defaultURL;
-    return targetURL;
 }
 
 - (IBAction)newWindow:(id)sender

@@ -13,14 +13,18 @@ NIBS := $(NIBS_1:.xib=.nib)
 
 CFLAGS := \
 	-std=c99 \
+	-fobjc-arc \
         -F $(WEBKIT_FRAMEWORK_PATH) \
 	-framework WebKit \
 	-framework Cocoa \
 	-framework UniformTypeIdentifiers \
 	-framework SecurityInterface \
 	-framework QuartzCore \
+	-Wall \
+	-Wextra \
 	-Wno-deprecated-declarations \
-	-Wno-unused-command-line-argument
+	-Wno-unused-command-line-argument \
+	-Wno-unused-parameter
 
 ./build/%.m.o: %.m
 	@echo CC $@
