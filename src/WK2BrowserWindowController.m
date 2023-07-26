@@ -76,7 +76,6 @@ static const int testFooterBannerHeight = 58;
     WKWebViewConfiguration *_configuration;
     WKWebView *_webView;
     BOOL _zoomTextOnly;
-    BOOL _isPrivateBrowsingWindow;
 
     BOOL _useShrinkToFit;
 
@@ -152,7 +151,6 @@ static const int testFooterBannerHeight = 58;
         return nil;
 
     _configuration = [configuration copy];
-    _isPrivateBrowsingWindow = !_configuration.websiteDataStore.isPersistent;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userAgentDidChange:) name:kUserAgentChangedNotificationName object:nil];
     return self;
@@ -584,9 +582,6 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     [subtitle appendString:@"]"];
 
-    if (_isPrivateBrowsingWindow)
-        [subtitle appendString:@" 🙈"];
-
     if (_webView._editable)
         [subtitle appendString:@" ✏️"];
 
@@ -612,11 +607,6 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
     [controller awakeFromNib];
-
-    if (!configuration.websiteDataStore.isPersistent)
-        controller.window.tabbingIdentifier = @"WK2PrivateWindow";
-    else
-        controller.window.tabbingIdentifier = @"WK2Window";
 
     controller.window.tabbingMode = NSWindowTabbingModePreferred;
 

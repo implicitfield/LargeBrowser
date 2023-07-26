@@ -2,6 +2,8 @@ ifndef WEBKIT_FRAMEWORK_PATH
 $(error WEBKIT_FRAMEWORK_PATH must be set to a path that contains WebKit.framework)
 endif
 
+.DEFAULT_GOAL := MiniBrowser.app
+
 SRCS := $(shell find src -name '*.m')
 OBJS := $(SRCS:%=./build/%.o)
 
@@ -13,7 +15,6 @@ CFLAGS := \
 	-std=c99 \
         -F $(WEBKIT_FRAMEWORK_PATH) \
 	-framework WebKit \
-	-framework WebKitLegacy \
 	-framework Cocoa \
 	-framework UniformTypeIdentifiers \
 	-framework SecurityInterface \
@@ -46,3 +47,6 @@ MiniBrowser.app: MiniBrowser $(NIBS)
 	cp $(NIBS) MiniBrowser.app/Contents/Resources
 	cp Info.plist MiniBrowser.app/Contents/
 	printf 'APPL????' > MiniBrowser.app/Contents/PkgInfo
+
+clean:
+	rm -rf MiniBrowser.app build

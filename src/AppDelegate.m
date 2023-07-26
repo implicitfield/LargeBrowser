@@ -27,7 +27,6 @@
 
 #import "ExtensionManagerWindowController.h"
 #import "SettingsController.h"
-#import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -40,13 +39,6 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 static const NSString * const kURLArgumentString = @"--url";
-
-enum {
-    WebKit1NewWindowTag = 1,
-    WebKit2NewWindowTag = 2,
-    WebKit1NewEditorTag = 3,
-    WebKit2NewEditorTag = 4
-};
 
 @implementation NSApplication (MiniBrowserApplicationExtensions)
 
@@ -154,44 +146,10 @@ static WKWebsiteDataStore *persistentDataStore(void)
 - (BrowserWindowController *)createBrowserWindowController:(id)sender
 {
     BrowserWindowController *controller = nil;
-    BOOL useWebKit2 = NO;
-    BOOL makeEditable = NO;
 
-    if ([sender respondsToSelector:@selector(tag)]) {
-        useWebKit2 = [sender tag] == WebKit2NewWindowTag || [sender tag] == WebKit2NewEditorTag;
-        makeEditable = [sender tag] == WebKit1NewEditorTag || [sender tag] == WebKit2NewEditorTag;
-    } else if ([sender respondsToSelector:@selector(tabbingIdentifier)]) {
-        useWebKit2 = [[sender tabbingIdentifier] isEqualToString:@"WK2Window"] || [[sender tabbingIdentifier] isEqualToString:@"WK2EditorWindow"];
-        makeEditable = [[sender tabbingIdentifier] isEqualToString:@"WK1EditorWindow"] || [[sender tabbingIdentifier] isEqualToString:@"WK2EditorWindow"];
-    } else {
-        useWebKit2 = _settingsController.useWebKit2ByDefault;
-        makeEditable = _settingsController.createEditorByDefault;
-    }
-
-    if (!useWebKit2) {
-        controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
-        if (!controller)
-            return nil;
-
-        if (makeEditable)
-            controller.window.tabbingIdentifier = @"WK1EditorWindow";
-        else
-            controller.window.tabbingIdentifier = @"WK1Window";
-    } else {
-        controller = [[WK2BrowserWindowController alloc] initWithConfiguration:[self defaultConfiguration]];
-        if (!controller)
-            return nil;
-
-        if (makeEditable)
-            controller.window.tabbingIdentifier = @"WK2EditorWindow";
-        else
-            controller.window.tabbingIdentifier = @"WK2Window";
-    }
-
-    controller.window.tabbingMode = NSWindowTabbingModePreferred;
-
-    if (makeEditable)
-        controller.editable = YES;
+    controller = [[WK2BrowserWindowController alloc] initWithConfiguration:[self defaultConfiguration]];
+    if (!controller)
+        return nil;
 
     [_browserWindowControllers addObject:controller];
 
@@ -214,16 +172,6 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
 - (IBAction)newWindow:(id)sender
 {
-    BrowserWindowController *controller = [self createBrowserWindowController:sender];
-    if (!controller)
-        return;
-
-    [[controller window] makeKeyAndOrderFront:sender];
-    [controller loadURLString:[self targetURLOrDefaultURL]];
-}
-
-- (IBAction)newPrivateWindow:(id)sender
-{
     WKWebViewConfiguration *privateConfiguraton = [self.defaultConfiguration copy];
     privateConfiguraton.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
@@ -231,32 +179,15 @@ static WKWebsiteDataStore *persistentDataStore(void)
     if (!controller)
         return;
 
-    controller.window.tabbingIdentifier = @"WK2PrivateWindow";
-    controller.window.tabbingMode = NSWindowTabbingModePreferred;
     [[controller window] makeKeyAndOrderFront:sender];
     [_browserWindowControllers addObject:controller];
 
     [controller loadURLString:_settingsController.defaultURL];
 }
 
-- (IBAction)newEditorWindow:(id)sender
-{
-    BrowserWindowController *controller = [self createBrowserWindowController:sender];
-    if (!controller)
-        return;
-
-    [[controller window] makeKeyAndOrderFront:sender];
-    [controller loadHTMLString:@"<html><body></body></html>"];
-}
-
 - (IBAction)newWindowForTab:(id)sender
 {
-    if ([[sender tabbingIdentifier] isEqualToString:@"WK2PrivateWindow"])
-        [self newPrivateWindow:sender];
-    else if ([[sender tabbingIdentifier] isEqualToString:@"WK1EditorWindow"] || [[sender tabbingIdentifier] isEqualToString:@"WK2EditorWindow"])
-        [self newEditorWindow:sender];
-    else
-        [self newWindow:sender];
+    [self newWindow:sender];
 }
 
 - (void)didCreateBrowserWindowController:(BrowserWindowController *)controller
@@ -279,10 +210,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
     if (!_openNewWindowAtStartup)
         return;
 
-    if (_settingsController.createEditorByDefault)
-        [self newEditorWindow:self];
-    else
-        [self newWindow:self];
+    [self newWindow:self];
 }
 
 - (BrowserWindowController *)frontmostBrowserWindowController
@@ -353,21 +281,12 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
 - (void)_updateNewWindowKeyEquivalents
 {
-    NSEventModifierFlags webKit1Flags = _settingsController.useWebKit2ByDefault ? NSEventModifierFlagOption : 0;
-    NSEventModifierFlags webKit2Flags = _settingsController.useWebKit2ByDefault ? 0 : NSEventModifierFlagOption;
+    NSEventModifierFlags webKit2Flags = 0;
 
-    NSString *normalWindowEquivalent = _settingsController.createEditorByDefault ? @"N" : @"n";
-    NSString *editorEquivalent = _settingsController.createEditorByDefault ? @"n" : @"N";
+    NSString *normalWindowEquivalent = @"n";
 
-    _newWebKit1WindowItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit1Flags;
     _newWebKit2WindowItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit2Flags;
-    _newWebKit1EditorItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit1Flags;
-    _newWebKit2EditorItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit2Flags;
-
-    _newWebKit1WindowItem.keyEquivalent = normalWindowEquivalent;
     _newWebKit2WindowItem.keyEquivalent = normalWindowEquivalent;
-    _newWebKit1EditorItem.keyEquivalent = editorEquivalent;
-    _newWebKit2EditorItem.keyEquivalent = editorEquivalent;
 }
 
 - (IBAction)showExtensionsManager:(id)sender

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21701"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -70,32 +70,9 @@
                                     <action selector="openLocation:" target="-1" id="575"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="New WebKit1 Window" tag="1" keyEquivalent="n" id="573">
-                                <connections>
-                                    <action selector="newWindow:" target="-1" id="574"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="New WebKit2 Window" tag="2" keyEquivalent="n" id="571">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                            <menuItem title="New Window" tag="2" keyEquivalent="n" id="571">
                                 <connections>
                                     <action selector="newWindow:" target="-1" id="572"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="New WebKit2 Private Window" tag="2" id="Zqs-AO-XAX">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="newPrivateWindow:" target="-1" id="mf5-zi-a5R"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="New WebKit1 Editor" tag="3" keyEquivalent="N" id="jNR-Z3-YWi" userLabel="New WebKit1 Editor">
-                                <connections>
-                                    <action selector="newEditorWindow:" target="-1" id="Nv5-c0-KRP"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="New WebKit2 Editor" tag="4" keyEquivalent="N" id="IdI-wb-1JD" userLabel="New WebKit2 Editor">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="newEditorWindow:" target="-1" id="kk6-R4-iec"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="72">
@@ -912,9 +889,6 @@
         </menu>
         <customObject id="494" customClass="BrowserAppDelegate">
             <connections>
-                <outlet property="_newWebKit1EditorItem" destination="jNR-Z3-YWi" id="6wB-Aa-CK7"/>
-                <outlet property="_newWebKit1WindowItem" destination="573" id="ZCj-u2-PU7"/>
-                <outlet property="_newWebKit2EditorItem" destination="IdI-wb-1JD" id="DIr-pe-XI8"/>
                 <outlet property="_newWebKit2WindowItem" destination="571" id="1Gv-mK-aul"/>
                 <outlet property="_settingsMenu" destination="Egg-52-IiJ" id="JMi-UF-EfK"/>
             </connections>

@@ -38,8 +38,6 @@ static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
 
 static NSString * const CustomUserAgentPreferenceKey = @"CustomUserAgentIdentifier";
 
-static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault";
-static NSString * const CreateEditorByDefaultPreferenceKey = @"CreateEditorByDefault";
 static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
 static NSString * const LegacyLineLayoutVisualCoverageEnabledPreferenceKey = @"LegacyLineLayoutVisualCoverageEnabled";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
@@ -92,7 +90,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         return nil;
 
     NSArray *onByDefaultPrefs = @[
-        UseWebKit2ByDefaultPreferenceKey,
         AcceleratedDrawingEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
@@ -158,8 +155,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         return addSubmenuToMenu(menu, title);
     };
     
-    addItem(@"Use WebKit2 By Default", @selector(toggleUseWebKit2ByDefault:));
-    addItem(@"Create Editor By Default", @selector(toggleCreateEditorByDefault:));
     addItem(@"Set Default URL to Current URL", @selector(setDefaultURLToCurrentURL:));
 
     addSeparator();
@@ -335,11 +330,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 {
     SEL action = [menuItem action];
 
-    if (action == @selector(toggleUseWebKit2ByDefault:))
-        [menuItem setState:[self useWebKit2ByDefault] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleCreateEditorByDefault:))
-        [menuItem setState:[self createEditorByDefault] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleUseTransparentWindows:))
+    if (action == @selector(toggleUseTransparentWindows:))
         [menuItem setState:[self useTransparentWindows] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUsePaginatedMode:))
         [menuItem setState:[self usePaginatedMode] ? NSControlStateValueOn : NSControlStateValueOff];
@@ -417,26 +408,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     [defaults setBool:![defaults boolForKey:defaultName] forKey:defaultName];
 
     [[[NSApplication sharedApplication] browserAppDelegate] didChangeSettings];
-}
-
-- (void)toggleUseWebKit2ByDefault:(id)sender
-{
-    [self _toggleBooleanDefault:UseWebKit2ByDefaultPreferenceKey];
-}
-
-- (BOOL)useWebKit2ByDefault
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:UseWebKit2ByDefaultPreferenceKey];
-}
-
-- (void)toggleCreateEditorByDefault:(id)sender
-{
-    [self _toggleBooleanDefault:CreateEditorByDefaultPreferenceKey];
-}
-
-- (BOOL)createEditorByDefault
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:CreateEditorByDefaultPreferenceKey];
 }
 
 - (void)toggleUseTransparentWindows:(id)sender
