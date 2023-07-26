@@ -93,6 +93,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         AcceleratedDrawingEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
+        UseSystemAppearancePreferenceKey,
         WebViewFillsWindowKey,
         ResourceLoadStatisticsEnabledPreferenceKey,
     ];
@@ -179,10 +180,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Use System Appearance", @selector(toggleUseSystemAppearance:));
     addItem(@"Enable Data Detectors", @selector(toggleDataDetectorsEnabled:));
     addItem(@"Use Mock Capture Devices", @selector(toggleUseMockCaptureDevices:));
-
-    addSeparator();
-    addItem(@"WebKit2-only Settings", nil);
-    indent = YES;
     addItem(@"Reserve Space For Banners", @selector(toggleReserveSpaceForBanners:));
     addItem(@"Show Tiled Scrolling Indicator", @selector(toggleShowTiledScrollingIndicator:));
     addItem(@"Use UI-Side Compositing", @selector(toggleUseUISideCompositing:));
@@ -190,7 +187,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Load All Site Icons Per-Page", @selector(toggleLoadsAllSiteIcons:));
     addItem(@"Use GameController.framework on macOS (Restart required)", @selector(toggleUsesGameControllerFramework:));
     addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
-    indent = NO;
+    addSeparator();
 
     NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
     addItemToMenu(debugOverlaysMenu, @"Non-fast Scrollable Region", @selector(toggleDebugOverlay:), NO, NonFastScrollableRegionOverlayTag);
