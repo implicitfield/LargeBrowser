@@ -50,7 +50,11 @@
     self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
 
     [share sendActionOn:NSEventMaskLeftMouseDown];
-    [[self window] makeFirstResponder:urlText];
+
+    SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
+    if (settings.startWithEmptyPage)
+        [[self window] makeFirstResponder:urlText];
+
     [super windowDidLoad];
 }
 
@@ -78,7 +82,7 @@
     if ([address hasPrefix:@"about:"])
         return address;
 
-    return [@"http://" stringByAppendingString:address];
+    return [@"https://" stringByAppendingString:address];
 }
 
 - (IBAction)share:(id)sender

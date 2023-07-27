@@ -72,6 +72,7 @@ static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2Us
 
 static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
 static NSString * const NetworkCacheSpeculativeRevalidationDisabledKey = @"NetworkCacheSpeculativeRevalidationDisabled";
+static NSString * const StartWithEmptyPageKey = @"StartWithEmptyPage";
 
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
@@ -96,6 +97,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         UseSystemAppearancePreferenceKey,
         WebViewFillsWindowKey,
         ResourceLoadStatisticsEnabledPreferenceKey,
+       StartWithEmptyPageKey,
     ];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -187,6 +189,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Load All Site Icons Per-Page", @selector(toggleLoadsAllSiteIcons:));
     addItem(@"Use GameController.framework on macOS (Restart required)", @selector(toggleUsesGameControllerFramework:));
     addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
+    addItem(@"Start With an Empty Page", @selector(toggleStartWithEmptyPage:));
     addSeparator();
 
     NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
@@ -369,6 +372,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self usesGameControllerFramework] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:))
         [menuItem setState:[self networkCacheSpeculativeRevalidationDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleStartWithEmptyPage:))
+        [menuItem setState:[self startWithEmptyPage] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseUISideCompositing:))
         [menuItem setState:[self useUISideCompositing] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePerWindowWebProcessesDisabled:))
@@ -559,6 +564,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (void)toggleNetworkCacheSpeculativeRevalidationDisabled:(id)sender
 {
     [self _toggleBooleanDefault:NetworkCacheSpeculativeRevalidationDisabledKey];
+}
+
+- (BOOL)startWithEmptyPage
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:StartWithEmptyPageKey];
+}
+
+- (void)toggleStartWithEmptyPage:(id)sender
+{
+    [self _toggleBooleanDefault:StartWithEmptyPageKey];
 }
 
 - (BOOL)isSpaceReservedForBanners

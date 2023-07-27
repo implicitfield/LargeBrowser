@@ -166,7 +166,8 @@ static WKWebsiteDataStore *persistentDataStore(void)
     [[controller window] makeKeyAndOrderFront:sender];
     [_browserWindowControllers addObject:controller];
 
-    [controller loadURLString:_settingsController.defaultURL];
+    if (!_settingsController.startWithEmptyPage)
+        [controller loadURLString:_settingsController.defaultURL];
 }
 
 - (IBAction)newWindowForTab:(id)sender

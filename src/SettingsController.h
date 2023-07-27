@@ -58,6 +58,7 @@ extern NSString * const kUserAgentChangedNotificationName;
 @property (nonatomic, readonly) BOOL loadsAllSiteIcons;
 @property (nonatomic, readonly) BOOL usesGameControllerFramework;
 @property (nonatomic, readonly) BOOL networkCacheSpeculativeRevalidationDisabled;
+@property (nonatomic, readonly) BOOL startWithEmptyPage;
 
 @property (nonatomic, readonly) NSString *defaultURL;
 @property (nonatomic, readonly) NSString *customUserAgent;
