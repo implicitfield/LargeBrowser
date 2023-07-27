@@ -568,24 +568,6 @@ static BOOL areEssentiallyEqual(double a, double b)
         title = @"MiniBrowser";
 
     self.window.title = title;
-
-    NSMutableString *subtitle = [@"[WK2" mutableCopy];
-    __auto_type appendProcessIdentifier = ^(NSString *name, pid_t processIdentifier) {
-        if (!processIdentifier)
-            return;
-        [subtitle appendFormat:@" %@:%d", name, processIdentifier];
-    };
-
-    appendProcessIdentifier(@"web", _webView._webProcessIdentifier);
-    appendProcessIdentifier(@"net", _webView.configuration.websiteDataStore._networkProcessIdentifier);
-    appendProcessIdentifier(@"gpu", _webView._gpuProcessIdentifier);
-
-    [subtitle appendString:@"]"];
-
-    if (_webView._editable)
-        [subtitle appendString:@" ✏️"];
-
-    self.window.subtitle = subtitle;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
