@@ -177,7 +177,15 @@ static const int testFooterBannerHeight = 58;
 
 - (IBAction)fetch:(id)sender
 {
-    [urlText setStringValue:[self addProtocolIfNecessary:urlText.stringValue]];
+    if (![self hasProtocol:urlText.stringValue]) {
+        if ([urlText.stringValue rangeOfString:@"."].location == NSNotFound) {
+            NSURLComponents *components = [NSURLComponents componentsWithString:@"https://duckduckgo.com/"];
+            NSURLQueryItem *queryItems = [NSURLQueryItem queryItemWithName:@"q" value:urlText.stringValue];
+            components.queryItems = [NSArray arrayWithObjects:queryItems, nil];
+            [urlText setStringValue:components.string];
+        } else
+            [urlText setStringValue:[self addProtocol:urlText.stringValue]];
+    }
     NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
     [_webView loadRequest:[NSURLRequest requestWithURL:url]];
 }

@@ -71,17 +71,22 @@
 {
 }
 
-- (NSString *)addProtocolIfNecessary:(NSString *)address
+- (BOOL)hasProtocol:(NSString *)address
 {
     if ([address rangeOfString:@"://"].length > 0)
-        return address;
+        return YES;
 
     if ([address hasPrefix:@"data:"])
-        return address;
+        return YES;
 
     if ([address hasPrefix:@"about:"])
-        return address;
+        return YES;
 
+    return NO;
+}
+
+- (NSString *)addProtocol:(NSString *)address
+{
     return [@"https://" stringByAppendingString:address];
 }
 
