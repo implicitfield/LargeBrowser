@@ -175,16 +175,33 @@ static const int testFooterBannerHeight = 58;
     [_webView reload];
 }
 
+- (BOOL)appearsToBeADomain:(NSURLComponents *)components
+{
+    if (!components || !components.host)
+        return NO;
+
+    NSArray *split = [components.host componentsSeparatedByString:@"."];
+    NSString *lastObject = [split lastObject];
+    if (lastObject && [split count] > 1 && lastObject.length > 1)
+        return YES;
+
+    return NO;
+}
+
 - (IBAction)fetch:(id)sender
 {
-    if (![self hasProtocol:urlText.stringValue]) {
-        if ([urlText.stringValue rangeOfString:@"."].location == NSNotFound) {
-            NSURLComponents *components = [NSURLComponents componentsWithString:@"https://duckduckgo.com/"];
+    NSURLComponents *components = [NSURLComponents componentsWithString:urlText.stringValue];
+    if (!components || (!components.host && !components.scheme)) {
+        NSString *URLWithScheme = [NSString stringWithFormat: @"https://%@", urlText.stringValue];
+        NSURLComponents *componentsWithScheme = [NSURLComponents componentsWithString:URLWithScheme];
+        if ([self appearsToBeADomain:componentsWithScheme])
+            [urlText setStringValue:componentsWithScheme.string];
+        else {
+            NSURLComponents *newComponents = [NSURLComponents componentsWithString:@"https://duckduckgo.com/"];
             NSURLQueryItem *queryItems = [NSURLQueryItem queryItemWithName:@"q" value:urlText.stringValue];
-            components.queryItems = [NSArray arrayWithObjects:queryItems, nil];
-            [urlText setStringValue:components.string];
-        } else
-            [urlText setStringValue:[self addProtocol:urlText.stringValue]];
+            newComponents.queryItems = [NSArray arrayWithObjects:queryItems, nil];
+            [urlText setStringValue:newComponents.string];
+        }
     }
     NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
     [_webView loadRequest:[NSURLRequest requestWithURL:url]];
