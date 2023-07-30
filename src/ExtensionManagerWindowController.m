@@ -44,11 +44,10 @@
                         return;
                     }
 
-                    BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
+                    BrowserAppDelegate *appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
                     [appDelegate.userContentContoller addContentRuleList:list];
                 }];
             }
-                
         }
     }
     return self;
@@ -69,7 +68,7 @@
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     openPanel.allowedContentTypes = @[ UTTypeJSON ];
-    
+
     [openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
         if (result != NSModalResponseOK)
             return;
@@ -79,7 +78,6 @@
         NSString *jsonString = [[NSString alloc] initWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
 
         [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:jsonString completionHandler:^(WKContentRuleList *list, NSError *error) {
-            
             if (error) {
                 NSAlert *alert = [NSAlert alertWithError:error];
                 [alert runModal];
@@ -104,7 +102,6 @@
             [appDelegate.userContentContoller addContentRuleList:list];
         }];
     }];
-
 }
 
 - (IBAction)remove:(id)sender

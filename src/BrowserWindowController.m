@@ -47,7 +47,7 @@
 #import <WebKit/_WKLinkIconParameters.h>
 #import <WebKit/_WKUserInitiatedAction.h>
 
-static void* keyValueObservingContext = &keyValueObservingContext;
+static void *keyValueObservingContext = &keyValueObservingContext;
 static const int testHeaderBannerHeight = 42;
 static const int testFooterBannerHeight = 58;
 
@@ -207,7 +207,7 @@ static const int testFooterBannerHeight = 58;
     }
 
     const NSTimeInterval stallTimerRepeatInterval = 0.2;
-    _mainThreadStallTimer = [NSTimer scheduledTimerWithTimeInterval:stallTimerRepeatInterval repeats:YES block:^(NSTimer * _Nonnull timer) {
+    _mainThreadStallTimer = [NSTimer scheduledTimerWithTimeInterval:stallTimerRepeatInterval repeats:YES block:^(NSTimer *_Nonnull timer) {
         const NSTimeInterval stallDuration = 0.2;
         usleep(stallDuration * USEC_PER_SEC);
     }];
@@ -247,13 +247,12 @@ static const int testFooterBannerHeight = 58;
     // telling WebKit to load every icon referenced by the page.
     if (settingsController.loadsAllSiteIcons)
         _webView._iconLoadingDelegate = self;
-    
+
     _webView._observedRenderingProgressEvents = _WKRenderingProgressEventFirstLayout
         | _WKRenderingProgressEventFirstVisuallyNonEmptyLayout
         | _WKRenderingProgressEventFirstPaintWithSignificantArea
         | _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering
         | _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
-
 
     if (settingsController.customUserAgent)
         _webView.customUserAgent = settingsController.customUserAgent;
@@ -265,7 +264,7 @@ static const int testFooterBannerHeight = 58;
     _textFinder.incrementalSearchingShouldDimContentView = NO;
     _textFinder.client = _webView;
     _textFinder.findBarContainer = self;
-    
+
 #if __has_feature(objc_arc)
     __weak WKWebView *weakWebView = _webView;
 #else
@@ -297,7 +296,7 @@ static const int testFooterBannerHeight = 58;
     [_webView removeObserver:self forKeyPath:@"URL"];
     [_webView removeObserver:self forKeyPath:@"hasOnlySecureContent"];
     [_webView removeObserver:self forKeyPath:@"_gpuProcessIdentifier"];
-    
+
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
 }
@@ -326,7 +325,7 @@ static const int testFooterBannerHeight = 58;
 {
     NSURLComponents *components = [NSURLComponents componentsWithString:urlText.stringValue];
     if (!components || (!components.host && !components.scheme)) {
-        NSString *URLWithScheme = [NSString stringWithFormat: @"https://%@", urlText.stringValue];
+        NSString *URLWithScheme = [NSString stringWithFormat:@"https://%@", urlText.stringValue];
         NSURLComponents *componentsWithScheme = [NSURLComponents componentsWithString:URLWithScheme];
         if ([self appearsToBeADomain:componentsWithScheme])
             [urlText setStringValue:componentsWithScheme.string];
@@ -410,12 +409,12 @@ static BOOL areEssentiallyEqual(double a, double b)
         return [self canZoomOut];
     if (action == @selector(resetZoom:))
         return [self canResetZoom];
-    
+
     // Disabled until missing WK2 functionality is exposed via API/SPI.
     if (action == @selector(dumpSourceToConsole:)
         || action == @selector(forceRepaint:))
         return NO;
-    
+
     if (action == @selector(showHideWebView:))
         [menuItem setTitle:[_webView isHidden] ? @"Show Web View" : @"Hide Web View"];
     else if (action == @selector(removeReinsertWebView:))
@@ -558,7 +557,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     return _webView;
 }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item
 {
     SEL action = item.action;
 
@@ -676,7 +675,7 @@ static BOOL areEssentiallyEqual(double a, double b)
         } else
             _webView._paginationMode = _WKPaginationModeUnpaginated;
     }
-    
+
     NSUInteger visibleOverlayRegions = 0;
     if (settings.nonFastScrollableRegionOverlayVisible)
         visibleOverlayRegions |= _WKNonFastScrollableRegion;
@@ -684,7 +683,7 @@ static BOOL areEssentiallyEqual(double a, double b)
         visibleOverlayRegions |= _WKWheelEventHandlerRegion;
     if (settings.interactionRegionOverlayVisible)
         visibleOverlayRegions |= _WKInteractionRegion;
-    
+
     preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
 
     int headerBannerHeight = [settings isSpaceReservedForBanners] ? testHeaderBannerHeight : 0;
@@ -746,7 +745,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     controller.window.tabbingMode = NSWindowTabbingModePreferred;
 
     [controller.window makeKeyAndOrderFront:self];
-    
+
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
 
     return controller->_webView;
@@ -754,53 +753,53 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    NSAlert* alert = [[NSAlert alloc] init];
+    NSAlert *alert = [[NSAlert alloc] init];
 
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript alert dialog from %@.", [frame.request.URL absoluteString]]];
     [alert setInformativeText:message];
     [alert addButtonWithTitle:@"OK"];
 
-    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+    [alert beginSheetModalForWindow:self.window completionHandler:^void(NSModalResponse response) {
         completionHandler();
     }];
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
 {
-    NSAlert* alert = [[NSAlert alloc] init];
+    NSAlert *alert = [[NSAlert alloc] init];
 
-    [alert setMessageText:[NSString stringWithFormat:@"JavaScript confirm dialog from %@.", [frame.request.URL  absoluteString]]];
+    [alert setMessageText:[NSString stringWithFormat:@"JavaScript confirm dialog from %@.", [frame.request.URL absoluteString]]];
     [alert setInformativeText:message];
-    
+
     [alert addButtonWithTitle:@"OK"];
     [alert addButtonWithTitle:@"Cancel"];
 
-    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+    [alert beginSheetModalForWindow:self.window completionHandler:^void(NSModalResponse response) {
         completionHandler(response == NSAlertFirstButtonReturn);
     }];
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *result))completionHandler
 {
-    NSAlert* alert = [[NSAlert alloc] init];
+    NSAlert *alert = [[NSAlert alloc] init];
 
     [alert setMessageText:[NSString stringWithFormat:@"JavaScript prompt dialog from %@.", [frame.request.URL absoluteString]]];
     [alert setInformativeText:prompt];
-    
+
     [alert addButtonWithTitle:@"OK"];
     [alert addButtonWithTitle:@"Cancel"];
-    
-    NSTextField* input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
+
+    NSTextField *input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
     [input setStringValue:defaultText];
     [alert setAccessoryView:input];
-    
-    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+
+    [alert beginSheetModalForWindow:self.window completionHandler:^void(NSModalResponse response) {
         [input validateEditing];
         completionHandler(response == NSAlertFirstButtonReturn ? [input stringValue] : nil);
     }];
 }
 
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * URLs))completionHandler
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 
@@ -828,7 +827,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     [alert addButtonWithTitle:@"Leave Page"];
     [alert addButtonWithTitle:@"Stay On Page"];
 
-    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+    [alert beginSheetModalForWindow:self.window completionHandler:^void(NSModalResponse response) {
         completionHandler(response == NSAlertFirstButtonReturn);
     }];
 }
@@ -915,8 +914,7 @@ static BOOL isJavaScriptURL(NSURL *url)
 {
     LOG(@"decidePolicyForNavigationAction");
 
-    if (navigationAction.buttonNumber == 1 &&
-        (navigationAction.modifierFlags & (NSEventModifierFlagCommand | NSEventModifierFlagShift)) != 0) {
+    if (navigationAction.buttonNumber == 1 && (navigationAction.modifierFlags & (NSEventModifierFlagCommand | NSEventModifierFlagShift)) != 0) {
         decisionHandler(WKNavigationActionPolicyCancel);
 
         BrowserWindowController *currentController = [[[NSApplication sharedApplication] browserAppDelegate] frontmostBrowserWindowController];
@@ -936,7 +934,7 @@ static BOOL isJavaScriptURL(NSURL *url)
     }
 
     NSURL *url = navigationAction.request.URL;
-    
+
     if (!isJavaScriptURL(url) && navigationAction._userInitiatedAction && !navigationAction._userInitiatedAction.isConsumed) {
         [navigationAction._userInitiatedAction consume];
         [[NSWorkspace sharedWorkspace] openURL:url];
@@ -985,7 +983,7 @@ static BOOL isJavaScriptURL(NSURL *url)
         NSView *container = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 200, 48)];
         NSTextField *userInput = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 24, 200, 24)];
         NSTextField *passwordInput = [[NSSecureTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)];
-        
+
         [alert setMessageText:[NSString stringWithFormat:@"Log in to %@:%lu.", challenge.protectionSpace.host, challenge.protectionSpace.port]];
         [alert addButtonWithTitle:@"Log in"];
         [alert addButtonWithTitle:@"Cancel"];
@@ -994,7 +992,7 @@ static BOOL isJavaScriptURL(NSURL *url)
         [alert setAccessoryView:container];
         [userInput setNextKeyView:passwordInput];
         [alert.window setInitialFirstResponder:userInput];
-        
+
         [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse response) {
             [userInput validateEditing];
             if (response == NSAlertFirstButtonReturn)
@@ -1036,9 +1034,9 @@ static BOOL isJavaScriptURL(NSURL *url)
         LOG(@"renderingProgressDidChange: %@", @"first paint after suppressed incremental rendering");
 }
 
-- (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData*)))completionHandler
+- (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData *)))completionHandler
 {
-    completionHandler(^void (NSData *data) {
+    completionHandler(^void(NSData *data) {
         LOG(@"Icon URL %@ received icon data of length %u", parameters.url, (unsigned)data.length);
     });
 }
@@ -1123,7 +1121,7 @@ static BOOL isJavaScriptURL(NSURL *url)
     return proposedServices;
 }
 
-- (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
+- (id<NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
 {
     return self;
 }
@@ -1138,7 +1136,7 @@ static BOOL isJavaScriptURL(NSURL *url)
 - (NSRect)sharingService:(NSSharingService *)sharingService sourceFrameOnScreenForShareItem:(id)item
 {
     NSRect rect = [self.window convertRectToScreen:self.mainContentView.bounds];
-    
+
     return rect;
 }
 
@@ -1160,7 +1158,7 @@ static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
 
     if (!imageRef)
         return nil;
-    
+
     NSImage *image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
     CGImageRelease(imageRef);
 

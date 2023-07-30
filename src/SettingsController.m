@@ -31,48 +31,48 @@
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInternalDebugFeature.h>
 
-NSString * const kUserAgentChangedNotificationName = @"UserAgentChangedNotification";
+NSString *const kUserAgentChangedNotificationName = @"UserAgentChangedNotification";
 
-static NSString * const defaultURL = @"about:blank";
-static NSString * const DefaultURLPreferenceKey = @"DefaultURL";
+static NSString *const defaultURL = @"about:blank";
+static NSString *const DefaultURLPreferenceKey = @"DefaultURL";
 
-static NSString * const CustomUserAgentPreferenceKey = @"CustomUserAgentIdentifier";
+static NSString *const CustomUserAgentPreferenceKey = @"CustomUserAgentIdentifier";
 
-static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
-static NSString * const LegacyLineLayoutVisualCoverageEnabledPreferenceKey = @"LegacyLineLayoutVisualCoverageEnabled";
-static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
-static NSString * const ReserveSpaceForBannersPreferenceKey = @"ReserveSpaceForBanners";
-static NSString * const WebViewFillsWindowKey = @"WebViewFillsWindow";
+static NSString *const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
+static NSString *const LegacyLineLayoutVisualCoverageEnabledPreferenceKey = @"LegacyLineLayoutVisualCoverageEnabled";
+static NSString *const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
+static NSString *const ReserveSpaceForBannersPreferenceKey = @"ReserveSpaceForBanners";
+static NSString *const WebViewFillsWindowKey = @"WebViewFillsWindow";
 
-static NSString * const ResourceUsageOverlayVisiblePreferenceKey = @"ResourceUsageOverlayVisible";
-static NSString * const LoadsAllSiteIconsKey = @"LoadsAllSiteIcons";
-static NSString * const UsesGameControllerFrameworkKey = @"UsesGameControllerFramework";
-static NSString * const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
-static NSString * const AcceleratedDrawingEnabledPreferenceKey = @"AcceleratedDrawingEnabled";
-static NSString * const DisplayListDrawingEnabledPreferenceKey = @"DisplayListDrawingEnabled";
-static NSString * const ResourceLoadStatisticsEnabledPreferenceKey = @"ResourceLoadStatisticsEnabled";
+static NSString *const ResourceUsageOverlayVisiblePreferenceKey = @"ResourceUsageOverlayVisible";
+static NSString *const LoadsAllSiteIconsKey = @"LoadsAllSiteIcons";
+static NSString *const UsesGameControllerFrameworkKey = @"UsesGameControllerFramework";
+static NSString *const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
+static NSString *const AcceleratedDrawingEnabledPreferenceKey = @"AcceleratedDrawingEnabled";
+static NSString *const DisplayListDrawingEnabledPreferenceKey = @"DisplayListDrawingEnabled";
+static NSString *const ResourceLoadStatisticsEnabledPreferenceKey = @"ResourceLoadStatisticsEnabled";
 
-static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
-static NSString * const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"WheelEventHandlerRegionOverlayVisible";
-static NSString * const InteractionRegionOverlayVisiblePreferenceKey = @"InteractionRegionOverlayVisible";
+static NSString *const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
+static NSString *const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"WheelEventHandlerRegionOverlayVisible";
+static NSString *const InteractionRegionOverlayVisiblePreferenceKey = @"InteractionRegionOverlayVisible";
 
-static NSString * const UseTransparentWindowsPreferenceKey = @"UseTransparentWindows";
-static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
+static NSString *const UseTransparentWindowsPreferenceKey = @"UseTransparentWindows";
+static NSString *const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
 
-static NSString * const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
-static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
-static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
-static NSString * const PunchOutWhiteBackgroundsInDarkModePreferenceKey = @"PunchOutWhiteBackgroundsInDarkMode";
-static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
-static NSString * const DataDetectorsEnabledPreferenceKey = @"DataDetectorsEnabled";
-static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
+static NSString *const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
+static NSString *const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
+static NSString *const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
+static NSString *const PunchOutWhiteBackgroundsInDarkModePreferenceKey = @"PunchOutWhiteBackgroundsInDarkMode";
+static NSString *const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
+static NSString *const DataDetectorsEnabledPreferenceKey = @"DataDetectorsEnabled";
+static NSString *const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
-static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
+static NSString *const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
-static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
-static NSString * const NetworkCacheSpeculativeRevalidationDisabledKey = @"NetworkCacheSpeculativeRevalidationDisabled";
-static NSString * const StartWithEmptyPageKey = @"StartWithEmptyPage";
+static NSString *const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
+static NSString *const NetworkCacheSpeculativeRevalidationDisabledKey = @"NetworkCacheSpeculativeRevalidationDisabled";
+static NSString *const StartWithEmptyPageKey = @"StartWithEmptyPage";
 
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
@@ -97,9 +97,9 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         UseSystemAppearancePreferenceKey,
         WebViewFillsWindowKey,
         ResourceLoadStatisticsEnabledPreferenceKey,
-       StartWithEmptyPageKey,
+        StartWithEmptyPageKey,
     ];
-    
+
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     for (NSString *prefName in onByDefaultPrefs) {
         if (![userDefaults objectForKey:prefName])
@@ -157,7 +157,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     __auto_type addSubmenu = ^(NSString *title) {
         return addSubmenuToMenu(menu, title);
     };
-    
+
     addItem(@"Set Default URL to Current URL", @selector(setDefaultURLToCurrentURL:));
 
     addSeparator();
@@ -292,7 +292,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 
 - (void)buildUserAgentsMenu:(NSMenu *)menu
 {
-    NSDictionary* defaultUAInfo = @{
+    NSDictionary *defaultUAInfo = @{
         @"label" : @"Default",
         @"identifier" : @"default",
     };
@@ -312,7 +312,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 
     for (NSDictionary *userAgentData in SettingsController.userAgentData) {
         NSString *name = userAgentData[@"label"];
-        
+
         if ([name isEqualToString:@"-"]) {
             addSeparator();
             continue;
@@ -793,7 +793,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     NSString *uaIdentifier = userAgentDict[@"identifier"];
     if (uaIdentifier)
         [[NSUserDefaults standardUserDefaults] setObject:uaIdentifier forKey:CustomUserAgentPreferenceKey];
-        
+
     [[NSNotificationCenter defaultCenter] postNotificationName:kUserAgentChangedNotificationName object:self];
 }
 

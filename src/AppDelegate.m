@@ -93,7 +93,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
         dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
     }
-    
+
     return dataStore;
 }
 
@@ -108,7 +108,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
-        
+
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
 
         NSArray<_WKFeature *> *features = [WKPreferences _features];
@@ -200,7 +200,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
 - (BrowserWindowController *)frontmostBrowserWindowController
 {
-    for (NSWindow* window in [NSApp windows]) {
+    for (NSWindow *window in [NSApp windows]) {
         id delegate = [window delegate];
 
         if (![delegate isKindOfClass:[BrowserWindowController class]])

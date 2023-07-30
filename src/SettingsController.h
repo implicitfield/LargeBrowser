@@ -25,7 +25,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-extern NSString * const kUserAgentChangedNotificationName;
+extern NSString *const kUserAgentChangedNotificationName;
 
 @interface SettingsController : NSObject
 
