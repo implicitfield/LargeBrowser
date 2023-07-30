@@ -25,9 +25,9 @@
 
 #import "AppDelegate.h"
 
+#import "BrowserWindowController.h"
 #import "ExtensionManagerWindowController.h"
 #import "SettingsController.h"
-#import "WK2BrowserWindowController.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -145,7 +145,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
 {
     BrowserWindowController *controller = nil;
 
-    controller = [[WK2BrowserWindowController alloc] initWithConfiguration:[self defaultConfiguration]];
+    controller = [[BrowserWindowController alloc] initWithConfiguration:[self defaultConfiguration]];
     if (!controller)
         return nil;
 
@@ -159,7 +159,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
     WKWebViewConfiguration *privateConfiguraton = [self.defaultConfiguration copy];
     privateConfiguraton.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
-    BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:privateConfiguraton];
+    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:privateConfiguraton];
     if (!controller)
         return;
 

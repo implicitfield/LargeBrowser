@@ -24,6 +24,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 
 @interface BrowserWindowController : NSWindowController {
     IBOutlet NSProgressIndicator *progressIndicator;
@@ -40,6 +41,8 @@
     BOOL _zoomTextOnly;
     BOOL _editable;
 }
+
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
 - (void)loadURLString:(NSString *)urlString;
 - (void)loadHTMLString:(NSString *)HTMLString;
