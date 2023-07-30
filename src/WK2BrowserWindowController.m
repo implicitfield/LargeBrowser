@@ -787,6 +787,21 @@ static BOOL isJavaScriptURL(NSURL *url)
 {
     LOG(@"decidePolicyForNavigationAction");
 
+    if (navigationAction.buttonNumber == 1 &&
+        (navigationAction.modifierFlags & (NSEventModifierFlagCommand | NSEventModifierFlagShift)) != 0) {
+        decisionHandler(WKNavigationActionPolicyCancel);
+
+        BrowserWindowController *currentController = [[[NSApplication sharedApplication] browserAppDelegate] frontmostBrowserWindowController];
+
+        WK2BrowserWindowController *controller = [[[NSApplication sharedApplication] browserAppDelegate] createBrowserWindowController:nil];
+        if (!controller || ![NSApp keyWindow])
+            return;
+
+        [[currentController window] addTabbedWindow:controller.window ordered:NSWindowAbove];
+        [controller->_webView loadRequest:navigationAction.request];
+        return;
+    }
+
     if (navigationAction._canHandleRequest) {
         decisionHandler(WKNavigationActionPolicyAllow);
         return;

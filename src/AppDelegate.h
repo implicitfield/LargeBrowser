@@ -46,6 +46,8 @@
 - (void)browserWindowWillClose:(NSWindow *)window;
 
 - (void)didChangeSettings;
+- (BrowserWindowController *)createBrowserWindowController:(id)sender;
+- (BrowserWindowController *)frontmostBrowserWindowController;
 
 @property (readonly, nonatomic) WKUserContentController *userContentContoller;
 @property (readonly, nonatomic) SettingsController *settingsController;
