@@ -30,6 +30,7 @@
 #import "SettingsController.h"
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebKit/WKContextMenuItemTypes.h>
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
@@ -47,9 +48,70 @@
 #import <WebKit/_WKLinkIconParameters.h>
 #import <WebKit/_WKUserInitiatedAction.h>
 
+enum ContextualMenuAction {
+    CMAInvalid,
+    CMAOpenInNewTab,
+};
+
 static void *keyValueObservingContext = &keyValueObservingContext;
 static const int testHeaderBannerHeight = 42;
 static const int testFooterBannerHeight = 58;
+static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
+static NSWindow *menuParentWindow = nil;
+
+@interface WKWebView (MenuExtension)
+
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
+
+@end
+
+@implementation WKWebView (MenuExtension)
+
+- (void)processMenuItem:(id)sender
+{
+    contextualMenuAction = CMAInvalid;
+    NSMenuItem *sendingMenuItem = sender;
+    NSString *identifier = [sendingMenuItem identifier];
+    NSMenuItem *originalMenu = [sendingMenuItem representedObject];
+    if ([identifier isEqualToString:@"openInNewTab"]) {
+        contextualMenuAction = CMAOpenInNewTab;
+        [originalMenu.target performSelector:originalMenu.action withObject:originalMenu];
+    }
+}
+
+- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+{
+    [super willOpenMenu:menu withEvent:event];
+    menuParentWindow = [event window];
+    for (NSInteger i = 0; i < [menu numberOfItems]; ++i) {
+        NSInteger tag = [[menu itemAtIndex:i] tag];
+        NSString *object;
+        switch (tag) {
+        case kWKContextMenuItemTagOpenLinkInNewWindow:
+            object = @"Link";
+            break;
+        case kWKContextMenuItemTagOpenImageInNewWindow:
+            object = @"Image";
+            break;
+        case kWKContextMenuItemTagOpenMediaInNewWindow:
+            object = @"Video";
+            break;
+        case kWKContextMenuItemTagOpenFrameInNewWindow:
+            object = @"Frame";
+            break;
+        default:
+            continue;
+        }
+        NSString *title = [NSString stringWithFormat:@"Open %@ in New Tab", object];
+        NSMenuItem *newItem = [[NSMenuItem alloc] initWithTitle:title action:@selector(processMenuItem:) keyEquivalent:@""];
+        newItem.identifier = @"openInNewTab";
+        newItem.target = self;
+        newItem.representedObject = [menu itemAtIndex:i];
+        [menu insertItem:newItem atIndex:(i + 1)];
+    }
+};
+
+@end
 
 @interface MiniBrowserNSTextFinder : NSTextFinder
 
@@ -739,6 +801,18 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
+    if (contextualMenuAction == CMAOpenInNewTab) {
+        contextualMenuAction = CMAInvalid;
+
+        BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:configuration];
+        [controller awakeFromNib];
+
+        [menuParentWindow addTabbedWindow:controller.window ordered:NSWindowAbove];
+        [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
+        [controller->_webView loadRequest:navigationAction.request];
+        return controller->_webView;
+    }
+
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:configuration];
     [controller awakeFromNib];
 
@@ -920,7 +994,7 @@ static BOOL isJavaScriptURL(NSURL *url)
         BrowserWindowController *currentController = [[[NSApplication sharedApplication] browserAppDelegate] frontmostBrowserWindowController];
 
         BrowserWindowController *controller = [[[NSApplication sharedApplication] browserAppDelegate] createBrowserWindowController:nil];
-        if (!controller || ![NSApp keyWindow])
+        if (!controller)
             return;
 
         [[currentController window] addTabbedWindow:controller.window ordered:NSWindowAbove];
