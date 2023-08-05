@@ -38,7 +38,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
-@implementation NSApplication (MiniBrowserApplicationExtensions)
+@implementation NSApplication (LargeBrowserApplicationExtensions)
 
 - (BrowserAppDelegate *)browserAppDelegate
 {

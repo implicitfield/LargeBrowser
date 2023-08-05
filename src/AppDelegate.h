@@ -55,7 +55,7 @@
 
 @end
 
-@interface NSApplication (MiniBrowserApplicationExtensions)
+@interface NSApplication (LargeBrowserApplicationExtensions)
 
 - (BrowserAppDelegate *)browserAppDelegate;
 

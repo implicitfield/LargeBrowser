@@ -113,13 +113,13 @@ static NSWindow *menuParentWindow = nil;
 
 @end
 
-@interface MiniBrowserNSTextFinder : NSTextFinder
+@interface LargeBrowserNSTextFinder : NSTextFinder
 
 @property (nonatomic, copy) dispatch_block_t hideInterfaceCallback;
 
 @end
 
-@implementation MiniBrowserNSTextFinder
+@implementation LargeBrowserNSTextFinder
 
 - (void)performAction:(NSTextFinderAction)op
 {
@@ -142,7 +142,7 @@ static NSWindow *menuParentWindow = nil;
 
     BOOL _useShrinkToFit;
 
-    MiniBrowserNSTextFinder *_textFinder;
+    LargeBrowserNSTextFinder *_textFinder;
     NSView *_textFindBarView;
     BOOL _findBarVisible;
 }
@@ -321,7 +321,7 @@ static NSWindow *menuParentWindow = nil;
 
     _webView._usePlatformFindUI = NO;
 
-    _textFinder = [[MiniBrowserNSTextFinder alloc] init];
+    _textFinder = [[LargeBrowserNSTextFinder alloc] init];
     _textFinder.incrementalSearchingEnabled = YES;
     _textFinder.incrementalSearchingShouldDimContentView = NO;
     _textFinder.client = _webView;
@@ -779,7 +779,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     }
 
     if (!title.length)
-        title = @"MiniBrowser";
+        title = @"LargeBrowser";
 
     self.window.title = title;
 }

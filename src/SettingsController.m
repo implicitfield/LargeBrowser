@@ -454,7 +454,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 {
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText:self.perWindowWebProcessesDisabled ? @"Are you sure you want to switch to per-window web processes?" : @"Are you sure you want to switch to a single web process?"];
-    [alert setInformativeText:@"This requires quitting and relaunching MiniBrowser. I'll do the quitting. You will have to do the relaunching."];
+    [alert setInformativeText:@"This requires quitting and relaunching LargeBrowser. I'll do the quitting. You will have to do the relaunching."];
     [alert addButtonWithTitle:@"Switch and Quit"];
     [alert addButtonWithTitle:@"Cancel"];
 

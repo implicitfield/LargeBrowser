@@ -2,7 +2,7 @@ ifndef WEBKIT_FRAMEWORK_PATH
 $(error WEBKIT_FRAMEWORK_PATH must be set to a path that contains WebKit.framework)
 endif
 
-.DEFAULT_GOAL := MiniBrowser.app
+.DEFAULT_GOAL := LargeBrowser.app
 
 SRCS := $(shell find src -name '*.m')
 OBJS := $(SRCS:%=./build/%.o)
@@ -37,20 +37,20 @@ CFLAGS := \
 	ibtool --compile $@ $<
 
 # Mimic what Safari Technology Preview does, i.e. just embed DYLD_FRAMEWORK_PATH and DYLD_LIBRARY_PATH into the main binary.
-MiniBrowser: $(OBJS)
+LargeBrowser: $(OBJS)
 	@echo LD $@
 	@mkdir -p $(@D)
 	cc $(CFLAGS) -Wl,-dyld_env,DYLD_FRAMEWORK_PATH=@loader_path/../Frameworks -Wl,-dyld_env,DYLD_LIBRARY_PATH=@loader_path/../Frameworks -o build/$@ $(OBJS)
 
-MiniBrowser.app: MiniBrowser $(NIBS)
-	@mkdir -p MiniBrowser.app/Contents/MacOS
-	@mkdir -p MiniBrowser.app/Contents/Frameworks
-	@mkdir -p MiniBrowser.app/Contents/Resources
-	cp build/MiniBrowser MiniBrowser.app/Contents/MacOS
-	cp -a "$(WEBKIT_FRAMEWORK_PATH)"/* MiniBrowser.app/Contents/Frameworks
-	cp $(NIBS) MiniBrowser.app/Contents/Resources
-	cp Info.plist MiniBrowser.app/Contents/
-	printf 'APPL????' > MiniBrowser.app/Contents/PkgInfo
+LargeBrowser.app: LargeBrowser $(NIBS)
+	@mkdir -p LargeBrowser.app/Contents/MacOS
+	@mkdir -p LargeBrowser.app/Contents/Frameworks
+	@mkdir -p LargeBrowser.app/Contents/Resources
+	cp build/LargeBrowser LargeBrowser.app/Contents/MacOS
+	cp -a "$(WEBKIT_FRAMEWORK_PATH)"/* LargeBrowser.app/Contents/Frameworks
+	cp $(NIBS) LargeBrowser.app/Contents/Resources
+	cp Info.plist LargeBrowser.app/Contents/
+	printf 'APPL????' > LargeBrowser.app/Contents/PkgInfo
 
 clean:
-	rm -rf MiniBrowser.app build
+	rm -rf LargeBrowser.app build

@@ -5,15 +5,15 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>MiniBrowser</string>
+	<string>LargeBrowser</string>
 	<key>CFBundleIconFile</key>
-	<string>MiniBrowser</string>
+	<string>LargeBrowser</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.webkit.MiniBrowser</string>
+	<string>org.webkit.LargeBrowser</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>MiniBrowser</string>
+	<string>LargeBrowser</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>

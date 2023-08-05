@@ -1,1 +1,1 @@
-make WEBKIT_FRAMEWORK_PATH=$PWD/../WebKit/WebKitBuild/Release MiniBrowser.app
+make WEBKIT_FRAMEWORK_PATH=$PWD/../WebKit/WebKitBuild/Release LargeBrowser.app
