@@ -49,7 +49,9 @@ LargeBrowser.app: LargeBrowser $(NIBS)
 	cp build/LargeBrowser LargeBrowser.app/Contents/MacOS
 	cp -a "$(WEBKIT_FRAMEWORK_PATH)"/* LargeBrowser.app/Contents/Frameworks
 	cp $(NIBS) LargeBrowser.app/Contents/Resources
-	cp Info.plist LargeBrowser.app/Contents/
+	cp Info.plist LargeBrowser.app/Contents
+	iconutil --convert icns icons/LargeBrowser.iconset
+	mv icons/LargeBrowser.icns LargeBrowser.app/Contents/Resources
 	printf 'APPL????' > LargeBrowser.app/Contents/PkgInfo
 
 clean:
