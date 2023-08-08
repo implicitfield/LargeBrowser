@@ -75,7 +75,10 @@ static NSWindow *menuParentWindow = nil;
     NSMenuItem *originalMenu = [sendingMenuItem representedObject];
     if ([identifier isEqualToString:@"openInNewTab"]) {
         contextualMenuAction = CMAOpenInNewTab;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [originalMenu.target performSelector:originalMenu.action withObject:originalMenu];
+#pragma clang diagnostic pop
     }
 }
 
