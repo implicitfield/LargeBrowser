@@ -192,11 +192,6 @@ static NSWindow *menuParentWindow = nil;
     return NO;
 }
 
-- (NSString *)addProtocol:(NSString *)address
-{
-    return [@"https://" stringByAppendingString:address];
-}
-
 - (IBAction)share:(id)sender
 {
     NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems:@[ self.currentURL ]];

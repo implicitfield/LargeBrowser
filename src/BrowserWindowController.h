@@ -47,7 +47,6 @@
 - (void)loadURLString:(NSString *)urlString;
 - (void)loadHTMLString:(NSString *)HTMLString;
 - (BOOL)hasProtocol:(NSString *)address;
-- (NSString *)addProtocol:(NSString *)address;
 
 - (IBAction)openLocation:(id)sender;
 
