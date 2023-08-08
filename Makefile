@@ -40,12 +40,12 @@ CFLAGS := \
 	iconutil --convert icns icons/LargeBrowser.iconset
 
 # Mimic what Safari Technology Preview does, i.e. just embed DYLD_FRAMEWORK_PATH and DYLD_LIBRARY_PATH into the main binary.
-LargeBrowser: $(OBJS)
+./build/LargeBrowser: $(OBJS)
 	@echo LD $@
 	@mkdir -p $(@D)
-	cc $(CFLAGS) -Wl,-dyld_env,DYLD_FRAMEWORK_PATH=@loader_path/../Frameworks -Wl,-dyld_env,DYLD_LIBRARY_PATH=@loader_path/../Frameworks -o build/$@ $(OBJS)
+	cc $(CFLAGS) -Wl,-dyld_env,DYLD_FRAMEWORK_PATH=@loader_path/../Frameworks -Wl,-dyld_env,DYLD_LIBRARY_PATH=@loader_path/../Frameworks -o $@ $(OBJS)
 
-LargeBrowser.app: LargeBrowser $(NIBS) ./icons/LargeBrowser.icns
+LargeBrowser.app: ./build/LargeBrowser $(NIBS) ./icons/LargeBrowser.icns
 	@mkdir -p LargeBrowser.app/Contents/MacOS
 	@mkdir -p LargeBrowser.app/Contents/Frameworks
 	@mkdir -p LargeBrowser.app/Contents/Resources
