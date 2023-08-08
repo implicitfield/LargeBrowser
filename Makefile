@@ -14,7 +14,8 @@ NIBS := $(NIBS_1:.xib=.nib)
 CFLAGS := \
 	-std=c99 \
 	-fobjc-arc \
-        -F $(WEBKIT_FRAMEWORK_PATH) \
+	-O2 \
+	-F $(WEBKIT_FRAMEWORK_PATH) \
 	-framework WebKit \
 	-framework Cocoa \
 	-framework UniformTypeIdentifiers \
