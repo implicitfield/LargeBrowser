@@ -38,6 +38,8 @@ CFLAGS := \
 	ibtool --compile $@ $<
 
 ./icons/LargeBrowser.icns: ./icons/LargeBrowser.iconset
+	@echo iconutil $@
+	@mkdir -p $(@D)
 	iconutil --convert icns icons/LargeBrowser.iconset
 
 # Mimic what Safari Technology Preview does, i.e. just embed DYLD_FRAMEWORK_PATH and DYLD_LIBRARY_PATH into the main binary.
