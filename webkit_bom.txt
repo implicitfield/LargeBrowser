@@ -1,0 +1,15 @@
+ANGLEMetalLib.metallib
+JavaScriptCore.framework
+MediaFormatReader.bundle
+WebCore.framework
+WebCoreTestSupport
+WebGPU.framework
+WebInspectorUI.framework
+WebKit.framework
+WebKitLegacy.framework
+com.apple.WebKit.GPU.xpc
+com.apple.WebKit.Networking.xpc
+com.apple.WebKit.WebContent.CaptivePortal.xpc
+com.apple.WebKit.WebContent.xpc
+libANGLE-shared.dylib
+libwebrtc.dylib

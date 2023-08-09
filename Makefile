@@ -11,6 +11,8 @@ XIBS := $(shell find src -name '*.xib')
 NIBS_1 := $(XIBS:%=./build/%)
 NIBS := $(NIBS_1:.xib=.nib)
 
+WEBKIT_BOM := $(shell paste -s -d ',' webkit_bom.txt)
+
 CFLAGS := \
 	-std=c99 \
 	-fobjc-arc \
@@ -53,7 +55,7 @@ LargeBrowser.app: ./build/LargeBrowser $(NIBS) ./icons/LargeBrowser.icns
 	@mkdir -p LargeBrowser.app/Contents/Frameworks
 	@mkdir -p LargeBrowser.app/Contents/Resources
 	cp build/LargeBrowser LargeBrowser.app/Contents/MacOS
-	cp -a "$(WEBKIT_FRAMEWORK_PATH)"/* LargeBrowser.app/Contents/Frameworks
+	cp -a "$(WEBKIT_FRAMEWORK_PATH)"/{$(WEBKIT_BOM)} LargeBrowser.app/Contents/Frameworks
 	cp $(NIBS) LargeBrowser.app/Contents/Resources
 	cp Info.plist LargeBrowser.app/Contents
 	cp icons/LargeBrowser.icns LargeBrowser.app/Contents/Resources
