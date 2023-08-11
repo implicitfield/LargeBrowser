@@ -390,10 +390,11 @@ static NSWindow *menuParentWindow = nil;
         if ([self appearsToBeADomain:componentsWithScheme])
             [urlText setStringValue:componentsWithScheme.string];
         else {
-            NSURLComponents *newComponents = [NSURLComponents componentsWithString:@"https://duckduckgo.com/"];
-            NSURLQueryItem *queryItems = [NSURLQueryItem queryItemWithName:@"q" value:urlText.stringValue];
-            newComponents.queryItems = [NSArray arrayWithObjects:queryItems, nil];
-            [urlText setStringValue:newComponents.string];
+            NSString *baseURL = @"https://duckduckgo.com/?q=";
+            NSCharacterSet *queryAllowedCharacters = [NSCharacterSet characterSetWithCharactersInString:@" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~"];
+            NSString *queryParameter = [urlText.stringValue stringByAddingPercentEncodingWithAllowedCharacters:queryAllowedCharacters];
+            queryParameter = [queryParameter stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+            [urlText setStringValue:[baseURL stringByAppendingString:queryParameter]];
         }
     }
     NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
