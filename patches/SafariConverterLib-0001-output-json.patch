@@ -1,0 +1,11 @@
+--- a/Sources/CommandLineWrapper/main.swift
++++ b/Sources/CommandLineWrapper/main.swift
+@@ -88,7 +88,7 @@ struct ConverterTool: ParsableCommand {
+ 
+         let encoded = try encodeJson(result)
+ 
+-        writeToStdOut(str: "\(encoded)")
++        writeToStdError(str: "\(result.converted)")
+     }
+ }
+ 

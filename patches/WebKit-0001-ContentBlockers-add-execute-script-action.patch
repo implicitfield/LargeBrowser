@@ -1,0 +1,159 @@
+--- a/Source/WebCore/contentextensions/ContentExtensionActions.h
++++ b/Source/WebCore/contentextensions/ContentExtensionActions.h
+@@ -62,6 +62,7 @@ template<typename T> struct ActionWithStringMetadata {
+ struct BlockLoadAction : public ActionWithoutMetadata<BlockLoadAction> { };
+ struct BlockCookiesAction : public ActionWithoutMetadata<BlockCookiesAction> { };
+ struct CSSDisplayNoneSelectorAction : public ActionWithStringMetadata<CSSDisplayNoneSelectorAction> { };
++struct ExecuteScriptAction : public ActionWithStringMetadata<ExecuteScriptAction> { };
+ struct NotifyAction : public ActionWithStringMetadata<NotifyAction> { };
+ struct IgnorePreviousRulesAction : public ActionWithoutMetadata<IgnorePreviousRulesAction> { };
+ struct MakeHTTPSAction : public ActionWithoutMetadata<MakeHTTPSAction> { };
+@@ -236,6 +237,7 @@ using ActionData = std::variant<
+     BlockLoadAction,
+     BlockCookiesAction,
+     CSSDisplayNoneSelectorAction,
++    ExecuteScriptAction,
+     NotifyAction,
+     IgnorePreviousRulesAction,
+     MakeHTTPSAction,
+--- a/Source/WebCore/contentextensions/ContentExtensionCompiler.cpp
++++ b/Source/WebCore/contentextensions/ContentExtensionCompiler.cpp
+@@ -81,6 +81,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
+     ActionMap blockLoadActionsMap;
+     ActionMap blockCookiesActionsMap;
+     PendingDisplayNoneActionsMap cssDisplayNoneActionsMap;
++    StringActionMap executeScriptActionsMap;
+     ActionMap ignorePreviousRuleActionsMap;
+     ActionMap makeHTTPSActionsMap;
+     StringActionMap notifyActionsMap;
+@@ -95,6 +96,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
+             blockLoadActionsMap.clear();
+             blockCookiesActionsMap.clear();
+             cssDisplayNoneActionsMap.clear();
++            executeScriptActionsMap.clear();
+             makeHTTPSActionsMap.clear();
+             notifyActionsMap.clear();
+         } else
+@@ -156,6 +158,8 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
+             return findOrMakeActionLocation(blockLoadActionsMap);
+         }, [&] (const BlockCookiesAction&) {
+             return findOrMakeActionLocation(blockCookiesActionsMap);
++        }, [&] (const ExecuteScriptAction& actionData) {
++            return findOrMakeNotifyActionLocation(executeScriptActionsMap, actionData);
+         }, [&] (const MakeHTTPSAction&) {
+             return findOrMakeActionLocation(makeHTTPSActionsMap);
+         }, [&] (const NotifyAction& actionData) {
+--- a/Source/WebCore/contentextensions/ContentExtensionError.cpp
++++ b/Source/WebCore/contentextensions/ContentExtensionError.cpp
+@@ -72,6 +72,8 @@ const std::error_category& contentExtensionErrorCategory()
+                 return "Invalid action type.";
+             case ContentExtensionError::JSONInvalidCSSDisplayNoneActionType:
+                 return "Invalid css-display-none action type. Requires a selector.";
++            case ContentExtensionError::JSONInvalidExecuteScriptActionType:
++                return "An execute-script action must have a payload.";
+             case ContentExtensionError::JSONInvalidRegex:
+                 return "Invalid or unsupported regular expression.";
+             case ContentExtensionError::JSONInvalidConditionList:
+--- a/Source/WebCore/contentextensions/ContentExtensionError.h
++++ b/Source/WebCore/contentextensions/ContentExtensionError.h
+@@ -56,6 +56,7 @@ enum class ContentExtensionError {
+     JSONInvalidAction,
+     JSONInvalidActionType,
+     JSONInvalidCSSDisplayNoneActionType,
++    JSONInvalidExecuteScriptActionType,
+     JSONInvalidNotification,
+     JSONInvalidRegex,
+ 
+--- a/Source/WebCore/contentextensions/ContentExtensionParser.cpp
++++ b/Source/WebCore/contentextensions/ContentExtensionParser.cpp
+@@ -245,6 +245,12 @@ static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::O
+             return std::nullopt; // Skip rules with invalid selectors to be backwards-compatible.
+         return Action { CSSDisplayNoneSelectorAction { { WTFMove(selectorString) } } };
+     }
++    if (actionType == "execute-script"_s) {
++        String payload = actionObject->getString("payload"_s);
++        if (!payload)
++            return makeUnexpected(ContentExtensionError::JSONInvalidExecuteScriptActionType);
++        return Action { ExecuteScriptAction { { WTFMove(payload) } } };
++    }
+     if (actionType == "make-https"_s)
+         return Action { MakeHTTPSAction() };
+     if (actionType == "notify"_s) {
+--- a/Source/WebCore/contentextensions/ContentExtensionsBackend.cpp
++++ b/Source/WebCore/contentextensions/ContentExtensionsBackend.cpp
+@@ -267,6 +267,13 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
+                     initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
+                 else if (currentDocument)
+                     currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
++            }, [&](const ExecuteScriptAction& actionData) {
++                if (resourceType == ResourceType::Document)
++                    initiatingDocumentLoader.addPendingContentExtensionScript(contentRuleListIdentifier, actionData.string);
++                else if (currentDocument) {
++                    if (auto* frame = currentDocument->frame())
++                        frame->script().evaluateIgnoringException(ScriptSourceCode { actionData.string });
++                }
+             }, [&](const NotifyAction& actionData) {
+                 results.summary.hasNotifications = true;
+                 result.notifications.append(actionData.string);
+@@ -345,6 +352,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
+             }, [&](const BlockCookiesAction&) {
+                 results.summary.blockedCookies = true;
+             }, [&](const CSSDisplayNoneSelectorAction&) {
++            }, [&](const ExecuteScriptAction&) {
+             }, [&](const NotifyAction&) {
+                 // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
+             }, [&](const MakeHTTPSAction&) {
+--- a/Source/WebCore/loader/DocumentLoader.cpp
++++ b/Source/WebCore/loader/DocumentLoader.cpp
+@@ -85,6 +85,7 @@
+ #include "ResourceLoadObserver.h"
+ #include "SWClientConnection.h"
+ #include "ScriptableDocumentParser.h"
++#include "ScriptSourceCode.h"
+ #include "SecurityPolicy.h"
+ #include "ServiceWorker.h"
+ #include "ServiceWorkerClientData.h"
+@@ -1371,9 +1372,12 @@ void DocumentLoader::commitData(const SharedBuffer& data)
+         for (const auto& pendingSelector : pendingSelectorEntry.value)
+             extensionStyleSheets.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
+     }
++    for (auto& pendingScriptEntry : m_pendingContentExtensionScripts)
++        m_frame->script().evaluateIgnoringException(ScriptSourceCode { pendingScriptEntry.value });
+ 
+     m_pendingNamedContentExtensionStyleSheets.clear();
+     m_pendingContentExtensionDisplayNoneSelectors.clear();
++    m_pendingContentExtensionScripts.clear();
+ #endif
+ 
+     ASSERT(m_frame->document()->parsing());
+@@ -2478,6 +2482,12 @@ void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String&
+     auto addResult = m_pendingContentExtensionDisplayNoneSelectors.add(identifier, Vector<std::pair<String, uint32_t>>());
+     addResult.iterator->value.append(std::make_pair(selector, selectorID));
+ }
++
++void DocumentLoader::addPendingContentExtensionScript(const String& identifier, const String& payload)
++{
++    ASSERT(!m_gotFirstByte);
++    m_pendingContentExtensionScripts.set(identifier, payload);
++}
+ #endif
+ 
+ #if USE(QUICK_LOOK)
+--- a/Source/WebCore/loader/DocumentLoader.h
++++ b/Source/WebCore/loader/DocumentLoader.h
+@@ -410,6 +410,7 @@ public:
+ #if ENABLE(CONTENT_EXTENSIONS)
+     void addPendingContentExtensionSheet(const String& identifier, StyleSheetContents&);
+     void addPendingContentExtensionDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID);
++    void addPendingContentExtensionScript(const String& identifier, const String& payload);
+ #endif
+ 
+     void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
+@@ -679,6 +680,7 @@ private:
+ #if ENABLE(CONTENT_EXTENSIONS)
+     MemoryCompactRobinHoodHashMap<String, RefPtr<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
+     MemoryCompactRobinHoodHashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
++    MemoryCompactRobinHoodHashMap<String, String> m_pendingContentExtensionScripts;
+ #endif
+     String m_customUserAgent;
+     String m_customUserAgentAsSiteSpecificQuirks;
