@@ -150,8 +150,6 @@ static NSWindow *menuParentWindow = nil;
     BOOL _findBarVisible;
 }
 
-@synthesize editable = _editable;
-
 - (id)initWithWindow:(NSWindow *)window
 {
     self = [super initWithWindow:window];
@@ -253,11 +251,6 @@ static NSWindow *menuParentWindow = nil;
     return 1;
 }
 
-- (IBAction)toggleEditable:(id)sender
-{
-    self.editable = !self.isEditable;
-}
-
 - (IBAction)toggleMainThreadStalls:(id)sender
 {
     if (_mainThreadStallTimer) {
@@ -286,7 +279,6 @@ static NSWindow *menuParentWindow = nil;
 
     _webView.allowsMagnification = YES;
     _webView.allowsBackForwardNavigationGestures = YES;
-    _webView._editable = self.isEditable;
 
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [containerView addSubview:_webView];
@@ -484,8 +476,6 @@ static BOOL areEssentiallyEqual(double a, double b)
         [menuItem setTitle:[self webViewFillsWindow] ? @"Inset Web View" : @"Fit Web View to Window"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleEditable:))
-        [menuItem setState:self.isEditable ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(showHideWebInspector:))
         [menuItem setTitle:_webView._inspector.isVisible ? @"Close Web Inspector" : @"Show Web Inspector"];
     else if (action == @selector(toggleAlwaysShowsHorizontalScroller:))

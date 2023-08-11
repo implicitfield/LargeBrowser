@@ -159,15 +159,6 @@
                                     <action selector="redo:" target="-1" id="231"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="fUL-7k-Dqg">
-                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                            </menuItem>
-                            <menuItem title="Editable" id="kG4-hS-JbX">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleEditable:" target="-1" id="6my-b2-eff"/>
-                                </connections>
-                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="206">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

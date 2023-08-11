@@ -39,7 +39,6 @@
     IBOutlet NSButton *toggleUseShrinkToFitButton;
 
     BOOL _zoomTextOnly;
-    BOOL _editable;
 }
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
@@ -94,8 +93,5 @@
 - (NSView *)mainContentView;
 
 - (CGFloat)pageScaleForMenuItemTag:(NSInteger)tag;
-
-@property (nonatomic, assign, getter=isEditable) BOOL editable;
-- (IBAction)toggleEditable:(id)sender;
 
 @end
