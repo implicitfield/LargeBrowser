@@ -982,11 +982,14 @@ static BOOL isJavaScriptURL(NSURL *url)
 
         BrowserWindowController *currentController = [[[NSApplication sharedApplication] browserAppDelegate] frontmostBrowserWindowController];
 
-        BrowserWindowController *controller = [[[NSApplication sharedApplication] browserAppDelegate] createBrowserWindowController:nil];
+        BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:[[[NSApplication sharedApplication] browserAppDelegate] defaultConfiguration]];
+        [controller awakeFromNib];
+
         if (!controller)
             return;
 
         [[currentController window] addTabbedWindow:controller.window ordered:NSWindowAbove];
+        [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
         [controller->_webView loadRequest:navigationAction.request];
         return;
     }
