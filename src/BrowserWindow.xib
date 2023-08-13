@@ -139,7 +139,7 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="200" height="22"/>
                         <size key="maxSize" width="100000" height="22"/>
-                        <textField key="view" verticalHuggingPriority="750" id="10">
+                        <textField key="view" verticalHuggingPriority="750" id="10" customClass="ExtendedNSTextField">
                             <rect key="frame" x="0.0" y="14" width="565" height="22"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="Search or enter website name" drawsBackground="YES" usesSingleLineMode="YES" id="11">

@@ -58,6 +58,17 @@ static const int testHeaderBannerHeight = 42;
 static const int testFooterBannerHeight = 58;
 static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
+@implementation ExtendedNSTextField
+
+- (BOOL)textShouldEndEditing:(NSText *)textObject {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[textObject window] makeFirstResponder:nil];
+    });
+    return YES;
+}
+
+@end
+
 @interface WKWebView (MenuExtension)
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;

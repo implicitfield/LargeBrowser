@@ -26,6 +26,12 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 
+@interface ExtendedNSTextField : NSTextField
+
+- (BOOL)textShouldEndEditing:(NSText *)textObject;
+
+@end
+
 @interface BrowserWindowController : NSWindowController {
     IBOutlet NSProgressIndicator *progressIndicator;
     IBOutlet NSButton *reloadButton;
@@ -34,7 +40,7 @@
     IBOutlet NSButton *forwardButton;
     IBOutlet NSButton *share;
     IBOutlet NSToolbar *toolbar;
-    IBOutlet NSTextField *urlText;
+    IBOutlet ExtendedNSTextField *urlText;
     IBOutlet NSView *containerView;
     IBOutlet NSButton *toggleUseShrinkToFitButton;
 
