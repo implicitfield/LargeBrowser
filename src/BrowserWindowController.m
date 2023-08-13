@@ -57,7 +57,6 @@ static void *keyValueObservingContext = &keyValueObservingContext;
 static const int testHeaderBannerHeight = 42;
 static const int testFooterBannerHeight = 58;
 static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
-static NSWindow *menuParentWindow = nil;
 
 @interface WKWebView (MenuExtension)
 
@@ -85,7 +84,6 @@ static NSWindow *menuParentWindow = nil;
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
     [super willOpenMenu:menu withEvent:event];
-    menuParentWindow = [event window];
     for (NSInteger i = 0; i < [menu numberOfItems]; ++i) {
         NSInteger tag = [[menu itemAtIndex:i] tag];
         NSString *object;
@@ -796,7 +794,7 @@ static BOOL areEssentiallyEqual(double a, double b)
         BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:configuration];
         [controller awakeFromNib];
 
-        [menuParentWindow addTabbedWindow:controller.window ordered:NSWindowAbove];
+        [[self window] addTabbedWindow:controller.window ordered:NSWindowAbove];
         [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
         [controller->_webView loadRequest:navigationAction.request];
         return controller->_webView;
@@ -980,15 +978,13 @@ static BOOL isJavaScriptURL(NSURL *url)
     if (navigationAction.buttonNumber == 1 && (navigationAction.modifierFlags & (NSEventModifierFlagCommand | NSEventModifierFlagShift)) != 0) {
         decisionHandler(WKNavigationActionPolicyCancel);
 
-        BrowserWindowController *currentController = [[[NSApplication sharedApplication] browserAppDelegate] frontmostBrowserWindowController];
-
         BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:[[[NSApplication sharedApplication] browserAppDelegate] defaultConfiguration]];
         [controller awakeFromNib];
 
         if (!controller)
             return;
 
-        [[currentController window] addTabbedWindow:controller.window ordered:NSWindowAbove];
+        [[self window] addTabbedWindow:controller.window ordered:NSWindowAbove];
         [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
         [controller->_webView loadRequest:navigationAction.request];
         return;
