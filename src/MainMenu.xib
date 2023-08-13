@@ -793,34 +793,16 @@
                                     <action selector="fetchWebsiteData:" target="-1" id="pVk-bR-Z4t"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Fetch Default Store Website Data" alternate="YES" id="hGe-aG-Hya">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
-                                <connections>
-                                    <action selector="fetchDefaultStoreWebsiteData:" target="-1" id="4Dx-M1-kNg"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Clear Website Data" id="bfj-13-wQ4">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="clearWebsiteData:" target="-1" id="pEC-gb-vGm"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Clear Default Store Website Data" alternate="YES" id="YZt-aI-HG8">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
-                                <connections>
-                                    <action selector="clearDefaultStoreWebsiteData:" target="-1" id="HDz-DK-I9T"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Fetch And Clear Website Data" id="VDP-iU-836">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="fetchAndClearWebsiteData:" target="-1" id="R06-l2-tP0"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Fetch And Clear Default Store Website Data" alternate="YES" id="VDT-W7-H7E">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
-                                <connections>
-                                    <action selector="fetchAndClearDefaultStoreWebsiteData:" target="-1" id="B75-Hd-TIT"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="uef-kb-r9n"/>

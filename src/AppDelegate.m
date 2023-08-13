@@ -79,31 +79,13 @@
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
 }
 
-static WKWebsiteDataStore *persistentDataStore(void)
-{
-    static WKWebsiteDataStore *dataStore;
-
-    if (!dataStore) {
-        _WKWebsiteDataStoreConfiguration *configuration = [[_WKWebsiteDataStoreConfiguration alloc] init];
-        configuration.networkCacheSpeculativeValidationEnabled = YES;
-
-        // FIXME: When built-in notifications are enabled, WebKit doesn't yet gracefully handle a missing webpushd service
-        // Until it does, uncomment this line when the service is known to be installed.
-        // [configuration setWebPushMachServiceName:@"org.webkit.webpushtestdaemon.service"];
-
-        dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
-    }
-
-    return dataStore;
-}
-
 - (WKWebViewConfiguration *)defaultConfiguration
 {
     static WKWebViewConfiguration *configuration;
 
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.websiteDataStore = persistentDataStore();
+        configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
@@ -156,10 +138,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
 - (IBAction)newWindow:(id)sender
 {
-    WKWebViewConfiguration *privateConfiguraton = [self.defaultConfiguration copy];
-    privateConfiguraton.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
-
-    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:privateConfiguraton];
+    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:[self defaultConfiguration]];
     if (!controller)
         return;
 
@@ -282,31 +261,6 @@ static WKWebsiteDataStore *persistentDataStore(void)
 - (WKUserContentController *)userContentContoller
 {
     return self.defaultConfiguration.userContentController;
-}
-
-- (IBAction)fetchDefaultStoreWebsiteData:(id)sender
-{
-    [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
-        NSLog(@"did fetch default store website data %@.", websiteDataRecords);
-    }];
-}
-
-- (IBAction)fetchAndClearDefaultStoreWebsiteData:(id)sender
-{
-    [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
-        [persistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] forDataRecords:websiteDataRecords completionHandler:^{
-            [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
-                NSLog(@"did clear default store website data, after clearing data is %@.", websiteDataRecords);
-            }];
-        }];
-    }];
-}
-
-- (IBAction)clearDefaultStoreWebsiteData:(id)sender
-{
-    [persistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
-        NSLog(@"Did clear default store website data.");
-    }];
 }
 
 @end
