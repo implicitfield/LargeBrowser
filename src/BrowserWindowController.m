@@ -810,8 +810,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithConfiguration:configuration];
     [controller awakeFromNib];
 
-    controller.window.tabbingMode = NSWindowTabbingModePreferred;
-
     [controller.window makeKeyAndOrderFront:self];
 
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
