@@ -323,10 +323,10 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     }
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-implementations"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 {
     SEL action = [menuItem action];
 
