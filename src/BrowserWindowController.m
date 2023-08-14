@@ -173,16 +173,12 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
     [share sendActionOn:NSEventMaskLeftMouseDown];
 
-    SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
-    if (settings.startWithEmptyPage)
-        [[self window] makeFirstResponder:urlText];
-
     [super windowDidLoad];
 }
 
 - (IBAction)openLocation:(id)sender
 {
-    [[self window] makeFirstResponder:urlText];
+    [[self window] makeFirstResponder:_urlText];
 }
 
 - (BOOL)hasProtocol:(NSString *)address
@@ -384,21 +380,21 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
 - (IBAction)fetch:(id)sender
 {
-    NSURLComponents *components = [NSURLComponents componentsWithString:urlText.stringValue];
+    NSURLComponents *components = [NSURLComponents componentsWithString:_urlText.stringValue];
     if (!components || (!components.host && !components.scheme)) {
-        NSString *URLWithScheme = [NSString stringWithFormat:@"https://%@", urlText.stringValue];
+        NSString *URLWithScheme = [NSString stringWithFormat:@"https://%@", _urlText.stringValue];
         NSURLComponents *componentsWithScheme = [NSURLComponents componentsWithString:URLWithScheme];
         if ([self appearsToBeADomain:componentsWithScheme])
-            [urlText setStringValue:componentsWithScheme.string];
+            [_urlText setStringValue:componentsWithScheme.string];
         else {
             NSString *baseURL = @"https://duckduckgo.com/?q=";
             NSCharacterSet *queryAllowedCharacters = [NSCharacterSet characterSetWithCharactersInString:@" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~"];
-            NSString *queryParameter = [urlText.stringValue stringByAddingPercentEncodingWithAllowedCharacters:queryAllowedCharacters];
+            NSString *queryParameter = [_urlText.stringValue stringByAddingPercentEncodingWithAllowedCharacters:queryAllowedCharacters];
             queryParameter = [queryParameter stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-            [urlText setStringValue:[baseURL stringByAppendingString:queryParameter]];
+            [_urlText setStringValue:[baseURL stringByAppendingString:queryParameter]];
         }
     }
-    NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
+    NSURL *url = [NSURL _webkit_URLWithUserTypedString:_urlText.stringValue];
     [_webView loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
@@ -917,7 +913,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (!URL.absoluteString.length)
         return;
 
-    urlText.stringValue = [URL _web_userVisibleString];
+    _urlText.stringValue = [URL _web_userVisibleString];
 }
 
 - (void)updateLockButtonIcon:(BOOL)hasOnlySecureContent
@@ -931,7 +927,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (void)loadURLString:(NSString *)urlString
 {
     // FIXME: We shouldn't have to set the url text here.
-    [urlText setStringValue:urlString];
+    [_urlText setStringValue:urlString];
     [self fetch:nil];
 }
 

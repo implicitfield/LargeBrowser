@@ -40,12 +40,13 @@
     IBOutlet NSButton *forwardButton;
     IBOutlet NSButton *share;
     IBOutlet NSToolbar *toolbar;
-    IBOutlet ExtendedNSTextField *urlText;
     IBOutlet NSView *containerView;
     IBOutlet NSButton *toggleUseShrinkToFitButton;
 
     BOOL _zoomTextOnly;
 }
+
+@property (readwrite) IBOutlet ExtendedNSTextField *urlText;
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
