@@ -37,8 +37,6 @@
 
     IBOutlet NSMenu *_settingsMenu;
 
-    IBOutlet NSMenuItem *_newWebKit2WindowItem;
-
     bool _openNewWindowAtStartup;
 }
 

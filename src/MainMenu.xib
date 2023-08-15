@@ -862,7 +862,6 @@
         </menu>
         <customObject id="494" customClass="BrowserAppDelegate">
             <connections>
-                <outlet property="_newWebKit2WindowItem" destination="571" id="1Gv-mK-aul"/>
                 <outlet property="_settingsMenu" destination="Egg-52-IiJ" id="JMi-UF-EfK"/>
             </connections>
         </customObject>

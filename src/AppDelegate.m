@@ -171,8 +171,6 @@
     WebHistory *webHistory = [[WebHistory alloc] init];
     [WebHistory setOptionalSharedHistory:webHistory];
 
-    [self _updateNewWindowKeyEquivalents];
-
     if (!_openNewWindowAtStartup)
         return;
 
@@ -238,21 +236,9 @@
 
 - (void)didChangeSettings
 {
-    [self _updateNewWindowKeyEquivalents];
-
     // Let all of the BrowserWindowControllers know that a setting changed, so they can attempt to dynamically update.
     for (BrowserWindowController *browserWindowController in _browserWindowControllers)
         [browserWindowController didChangeSettings];
-}
-
-- (void)_updateNewWindowKeyEquivalents
-{
-    NSEventModifierFlags webKit2Flags = 0;
-
-    NSString *normalWindowEquivalent = @"n";
-
-    _newWebKit2WindowItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit2Flags;
-    _newWebKit2WindowItem.keyEquivalent = normalWindowEquivalent;
 }
 
 - (IBAction)showExtensionsManager:(id)sender
