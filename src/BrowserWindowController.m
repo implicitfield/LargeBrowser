@@ -167,8 +167,6 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
 - (void)windowDidLoad
 {
-    // FIXME: We should probably adopt the default unified style, but we'd need
-    // somewhere to put the window/page title.
     self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
 
     [share sendActionOn:NSEventMaskLeftMouseDown];
