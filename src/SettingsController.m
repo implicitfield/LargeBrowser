@@ -28,8 +28,7 @@
 #import "AppDelegate.h"
 #import "BrowserWindowController.h"
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/_WKExperimentalFeature.h>
-#import <WebKit/_WKInternalDebugFeature.h>
+#import <WebKit/_WKFeature.h>
 
 NSString *const kUserAgentChangedNotificationName = @"UserAgentChangedNotification";
 
@@ -78,8 +77,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
     WheelEventHandlerRegionOverlayTag,
     InteractionRegionOverlayTag,
-    ExperimentalFeatureTag,
-    InternalDebugFeatureTag,
+    FeatureTag,
 };
 
 @implementation SettingsController
@@ -198,23 +196,15 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItemToMenu(debugOverlaysMenu, @"Interaction Region", @selector(toggleDebugOverlay:), NO, InteractionRegionOverlayTag);
     addItemToMenu(debugOverlaysMenu, @"Resource Usage", @selector(toggleShowResourceUsageOverlay:), NO, 0);
 
-    NSMenu *experimentalFeaturesMenu = addSubmenu(@"Experimental Features");
-    for (_WKExperimentalFeature *feature in WKPreferences._experimentalFeatures) {
-        NSMenuItem *item = addItemToMenu(experimentalFeaturesMenu, feature.name, @selector(toggleExperimentalFeature:), NO, ExperimentalFeatureTag);
+    NSMenu *featuresMenu = addSubmenu(@"WebKit Features");
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSMenuItem *item = addItemToMenu(featuresMenu, feature.key, @selector(toggleWebKitFeature:), NO, FeatureTag);
         item.toolTip = feature.details;
         item.representedObject = feature;
     }
-    addSeparatorToMenu(experimentalFeaturesMenu);
-    addItemToMenu(experimentalFeaturesMenu, @"Reset All to Defaults", @selector(resetAllExperimentalFeatures:), NO, 0);
 
-    NSMenu *internalDebugFeaturesMenu = addSubmenu(@"Internal Features");
-    for (_WKFeature *feature in WKPreferences._internalDebugFeatures) {
-        NSMenuItem *item = addItemToMenu(internalDebugFeaturesMenu, feature.name, @selector(toggleInternalDebugFeature:), NO, InternalDebugFeatureTag);
-        item.toolTip = feature.details;
-        item.representedObject = feature;
-    }
-    addSeparatorToMenu(internalDebugFeaturesMenu);
-    addItemToMenu(internalDebugFeaturesMenu, @"Reset All to Defaults", @selector(resetAllInternalDebugFeatures:), NO, 0);
+    addSeparatorToMenu(featuresMenu);
+    addItemToMenu(featuresMenu, @"Reset All to Defaults", @selector(resetAllWebKitFeatures:), NO, 0);
 }
 
 + (NSArray *)userAgentData
@@ -392,11 +382,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     }
 
     WKPreferences *defaultPreferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
-    if (menuItem.tag == ExperimentalFeatureTag) {
-        _WKFeature *feature = menuItem.representedObject;
-        [menuItem setState:[defaultPreferences _isEnabledForFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
-    }
-    if (menuItem.tag == InternalDebugFeatureTag) {
+    if (menuItem.tag == FeatureTag) {
         _WKFeature *feature = menuItem.representedObject;
         [menuItem setState:[defaultPreferences _isEnabledForFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
     }
@@ -718,7 +704,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [self _toggleBooleanDefault:preferenceKey];
 }
 
-- (void)toggleExperimentalFeature:(id)sender
+- (void)toggleWebKitFeature:(id)sender
 {
     _WKFeature *feature = ((NSMenuItem *)sender).representedObject;
     WKPreferences *preferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
@@ -729,35 +715,13 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     [[NSUserDefaults standardUserDefaults] setBool:!currentlyEnabled forKey:feature.key];
 }
 
-- (void)toggleInternalDebugFeature:(id)sender
-{
-    _WKInternalDebugFeature *feature = ((NSMenuItem *)sender).representedObject;
-    WKPreferences *preferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
-
-    BOOL currentlyEnabled = [preferences _isEnabledForInternalDebugFeature:feature];
-    [preferences _setEnabled:!currentlyEnabled forInternalDebugFeature:feature];
-
-    [[NSUserDefaults standardUserDefaults] setBool:!currentlyEnabled forKey:feature.key];
-}
-
-- (void)resetAllExperimentalFeatures:(id)sender
+- (void)resetAllWebKitFeatures:(id)sender
 {
     WKPreferences *preferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
-    NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
+    NSArray<_WKFeature *> *features = [WKPreferences _features];
 
-    for (_WKExperimentalFeature *feature in experimentalFeatures) {
-        [preferences _setEnabled:feature.defaultValue forExperimentalFeature:feature];
-        [[NSUserDefaults standardUserDefaults] setBool:feature.defaultValue forKey:feature.key];
-    }
-}
-
-- (void)resetAllInternalDebugFeatures:(id)sender
-{
-    WKPreferences *preferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
-    NSArray<_WKInternalDebugFeature *> *internalDebugFeatures = [WKPreferences _internalDebugFeatures];
-
-    for (_WKInternalDebugFeature *feature in internalDebugFeatures) {
-        [preferences _setEnabled:feature.defaultValue forInternalDebugFeature:feature];
+    for (_WKFeature *feature in features) {
+        [preferences _setEnabled:feature.defaultValue forFeature:feature];
         [[NSUserDefaults standardUserDefaults] setBool:feature.defaultValue forKey:feature.key];
     }
 }
