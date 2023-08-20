@@ -27,7 +27,9 @@
 
 extern NSString *const kUserAgentChangedNotificationName;
 
-@interface SettingsController : NSObject
+@interface SettingsController : NSObject {
+    NSArray *_onByDefaultFeatures;
+}
 
 - (instancetype)initWithMenu:(NSMenu *)menu;
 

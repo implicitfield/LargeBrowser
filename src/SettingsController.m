@@ -88,6 +88,12 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     if (!self)
         return nil;
 
+    _onByDefaultFeatures = @[
+        @"FullScreenEnabled",
+        @"AllowsPictureInPictureMediaPlayback",
+        @"IsAccessibilityIsolatedTreeEnabled",
+    ];
+
     NSArray *onByDefaultPrefs = @[
         AcceleratedDrawingEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
@@ -98,8 +104,13 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         StartWithEmptyPageKey,
     ];
 
+    NSMutableArray *onByDefault = [[NSMutableArray alloc] init];
+
+    [onByDefault addObjectsFromArray:_onByDefaultFeatures];
+    [onByDefault addObjectsFromArray:onByDefaultPrefs];
+
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    for (NSString *prefName in onByDefaultPrefs) {
+    for (NSString *prefName in onByDefault) {
         if (![userDefaults objectForKey:prefName])
             [userDefaults setBool:YES forKey:prefName];
     }
@@ -721,8 +732,13 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     NSArray<_WKFeature *> *features = [WKPreferences _features];
 
     for (_WKFeature *feature in features) {
-        [preferences _setEnabled:feature.defaultValue forFeature:feature];
-        [[NSUserDefaults standardUserDefaults] setBool:feature.defaultValue forKey:feature.key];
+        BOOL value = feature.defaultValue;
+        for (NSString *key in _onByDefaultFeatures) {
+            if ([feature.key isEqualToString:key])
+                value = YES;
+        }
+        [preferences _setEnabled:value forFeature:feature];
+        [[NSUserDefaults standardUserDefaults] setBool:value forKey:feature.key];
     }
 }
 

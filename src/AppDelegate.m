@@ -105,12 +105,6 @@
                 enabled = [feature defaultValue];
             [configuration.preferences _setEnabled:enabled forFeature:feature];
         }
-
-        configuration.preferences.elementFullscreenEnabled = YES;
-        configuration.preferences._allowsPictureInPictureMediaPlayback = YES;
-        configuration.preferences._developerExtrasEnabled = YES;
-        configuration.preferences._accessibilityIsolatedTreeEnabled = YES;
-        configuration.preferences._logsPageMessagesToSystemConsoleEnabled = YES;
     }
 
     configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;
