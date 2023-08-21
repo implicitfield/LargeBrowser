@@ -162,9 +162,6 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    WebHistory *webHistory = [[WebHistory alloc] init];
-    [WebHistory setOptionalSharedHistory:webHistory];
-
     if (!_openNewWindowAtStartup)
         return;
 
