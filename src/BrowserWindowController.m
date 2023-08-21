@@ -274,6 +274,19 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
     return !!_mainThreadStallTimer;
 }
 
+- (IBAction)toggleMute:(id)sender
+{
+    if ([self webViewUnmuted])
+        [_webView _setPageMuted:_WKMediaAudioMuted];
+    else
+        [_webView _setPageMuted:_WKMediaNoneMuted];
+}
+
+- (BOOL)webViewUnmuted
+{
+    return _webView._mediaMutedState == _WKMediaNoneMuted;
+}
+
 - (void)awakeFromNib
 {
     _webView = [[WKWebView alloc] initWithFrame:[containerView bounds] configuration:_configuration];
@@ -479,6 +492,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [menuItem setTitle:[self webViewFillsWindow] ? @"Inset Web View" : @"Fit Web View to Window"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleMute:))
+        [menuItem setTitle:[self webViewUnmuted] ? @"Mute This Tab" : @"Unmute This Tab"];
     else if (action == @selector(showHideWebInspector:))
         [menuItem setTitle:_webView._inspector.isVisible ? @"Close Web Inspector" : @"Show Web Inspector"];
     else if (action == @selector(toggleAlwaysShowsHorizontalScroller:))

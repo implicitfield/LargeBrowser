@@ -92,6 +92,9 @@
 - (IBAction)toggleMainThreadStalls:(id)sender;
 - (BOOL)mainThreadStallsEnabled;
 
+- (IBAction)toggleMute:(id)sender;
+- (BOOL)webViewUnmuted;
+
 - (void)didChangeSettings;
 - (BOOL)webViewFillsWindow;
 - (void)setWebViewFillsWindow:(BOOL)fillWindow;
