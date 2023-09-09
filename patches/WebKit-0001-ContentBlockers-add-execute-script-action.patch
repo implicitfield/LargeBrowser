@@ -90,7 +90,7 @@
 +                    initiatingDocumentLoader.addPendingContentExtensionScript(contentRuleListIdentifier, actionData.string);
 +                else if (currentDocument) {
 +                    if (auto* frame = currentDocument->frame())
-+                        frame->script().evaluateIgnoringException(ScriptSourceCode { actionData.string });
++                        frame->script().evaluateIgnoringException(ScriptSourceCode { actionData.string, JSC::SourceTaintedOrigin::Untainted });
 +                }
              }, [&](const NotifyAction& actionData) {
                  results.summary.hasNotifications = true;
@@ -118,7 +118,7 @@
              extensionStyleSheets.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
      }
 +    for (auto& pendingScriptEntry : m_pendingContentExtensionScripts)
-+        m_frame->script().evaluateIgnoringException(ScriptSourceCode { pendingScriptEntry.value });
++        m_frame->script().evaluateIgnoringException(ScriptSourceCode { pendingScriptEntry.value, JSC::SourceTaintedOrigin::Untainted });
  
      m_pendingNamedContentExtensionStyleSheets.clear();
      m_pendingContentExtensionDisplayNoneSelectors.clear();
@@ -126,7 +126,7 @@
  #endif
  
      ASSERT(m_frame->document()->parsing());
-@@ -2478,6 +2482,12 @@ void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String&
+@@ -2494,6 +2498,12 @@ void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String&
      auto addResult = m_pendingContentExtensionDisplayNoneSelectors.add(identifier, Vector<std::pair<String, uint32_t>>());
      addResult.iterator->value.append(std::make_pair(selector, selectorID));
  }
