@@ -494,9 +494,15 @@ static BOOL areEssentiallyEqual(double a, double b)
         [menuItem setState:_zoomTextOnly ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleMute:))
         [menuItem setTitle:[self webViewUnmuted] ? @"Mute This Tab" : @"Unmute This Tab"];
-    else if (action == @selector(showHideWebInspector:))
-        [menuItem setTitle:_webView._inspector.isVisible ? @"Close Web Inspector" : @"Show Web Inspector"];
-    else if (action == @selector(toggleAlwaysShowsHorizontalScroller:))
+    else if (action == @selector(showHideWebInspector:)) {
+        if (_webView._inspector.isVisible) {
+            [menuItem setTitle:@"Close Web Inspector"];
+            return YES;
+        } else {
+            [menuItem setTitle:@"Show Web Inspector"];
+            return _webView.configuration.preferences._developerExtrasEnabled;
+        }
+    } else if (action == @selector(toggleAlwaysShowsHorizontalScroller:))
         menuItem.state = _webView._alwaysShowsHorizontalScroller ? NSControlStateValueOn : NSControlStateValueOff;
     else if (action == @selector(toggleAlwaysShowsVerticalScroller:))
         menuItem.state = _webView._alwaysShowsVerticalScroller ? NSControlStateValueOn : NSControlStateValueOff;
