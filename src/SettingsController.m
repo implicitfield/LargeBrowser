@@ -91,6 +91,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     _onByDefaultFeatures = @[
         @"FullScreenEnabled",
         @"AllowsPictureInPictureMediaPlayback",
+        @"DeveloperExtrasEnabled",
         @"IsAccessibilityIsolatedTreeEnabled",
     ];
 
