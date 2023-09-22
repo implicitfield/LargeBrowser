@@ -1,6 +1,6 @@
 # Building WebKit
 
-This tutorial assumes that you clone WebKit under the LargeBrowser directory.
+This guide assumes that you clone WebKit under the LargeBrowser directory.
 
 ```
 # clone the repository
@@ -10,8 +10,9 @@ cd WebKit
 # optionally patch the source to add support for an 'execute-script' action for Content Blockers
 patch -p1 < ../patches/WebKit-0001-ContentBlockers-add-execute-script-action.patch
 
-# run the build script
-./Tools/Scripts/build-webkit --release
+# run the build script, optionally with MACOSX_DEPLOYMENT_TARGET set if you
+# aren't running the latest version of macOS.
+./Tools/Scripts/build-webkit --release MACOSX_DEPLOYMENT_TARGET=13.0
 cd ..
 ```
 
