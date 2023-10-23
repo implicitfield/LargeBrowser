@@ -1,0 +1,16 @@
+[
+    {
+        "trigger": {
+            "url-filter": ".*",
+            "if-domain": ["*youtube.com"]
+        },
+        "action": {
+            "type": "execute-script",
+            "payload": "
+            if (window.location.toString().includes('/results') && !window.location.toString().endsWith('/results') && !window.location.toString().endsWith('?search_query=') && !window.location.toString().includes('&sp=CAASAhAB')) {
+                window.location.replace(window.location + '&sp=CAASAhAB')
+            }
+        "
+        }
+    }
+]

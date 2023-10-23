@@ -14,7 +14,7 @@ LargeBrowser has been built with Content Blockers in mind. This document details
 ## Using the `execute-script` Action
 
 With the help of [a downstream WebKit patch](../patches/WebKit-0001-ContentBlockers-add-execute-script-action.patch), Content Blockers can modify the JavaScript environment before any third-party JavaScript gets a chance to run. Most mainstream adblock extensions use "scriptlets" for this purpose.
-See [YT-Adblock.json](YT-Adblock.json) for an in-depth example.
+Check the [content-blockers](content-blockers) subdirectory for examples.
 
 ## Using the EasyList Filter
 
