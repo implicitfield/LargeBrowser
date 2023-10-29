@@ -60,7 +60,8 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
 @implementation ExtendedNSTextField
 
-- (BOOL)textShouldEndEditing:(NSText *)textObject {
+- (BOOL)textShouldEndEditing:(NSText *)textObject
+{
     dispatch_async(dispatch_get_main_queue(), ^{
         [[textObject window] makeFirstResponder:nil];
     });
@@ -143,7 +144,7 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
 @end
 
-@interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate, NSTextFinderBarContainer, WKNavigationDelegate, WKUIDelegate, _WKIconLoadingDelegate> {
+@interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate, NSTextFinderBarContainer, WKNavigationDelegate, WKUIDelegate, WKUIDelegatePrivate, _WKIconLoadingDelegate> {
     NSTimer *_mainThreadStallTimer;
 }
 @end
@@ -1196,6 +1197,15 @@ static BOOL isJavaScriptURL(NSURL *url)
             }];
         }
     }];
+}
+
+- (void)_webViewDidRequestPointerLock:(WKWebView *)webView completionHandler:(void (^)(BOOL))completionHandler
+{
+    completionHandler(YES);
+}
+
+- (void)_webViewDidLosePointerLock:(WKWebView *)webView
+{
 }
 
 #pragma mark -
