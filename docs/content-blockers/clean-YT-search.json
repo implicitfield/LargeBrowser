@@ -7,7 +7,7 @@
         "action": {
             "type": "execute-script",
             "payload": "
-            if (window.location.toString().includes('/results') && !window.location.toString().endsWith('/results') && !window.location.toString().endsWith('?search_query=') && !window.location.toString().includes('&sp=CAASAhAB')) {
+            if (window.location.toString().includes('/results') && !window.location.toString().endsWith('/results') && !window.location.toString().endsWith('?search_query=') && !window.location.toString().includes('&sp=')) {
                 window.location.replace(window.location + '&sp=CAASAhAB')
             }
         "
