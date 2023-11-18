@@ -142,7 +142,7 @@
     if (!_settingsController.startWithEmptyPage)
         [controller loadURLString:_settingsController.defaultURL];
     else
-        [[controller window] makeFirstResponder:controller.urlText];
+        [[controller window] makeFirstResponder:controller->urlText];
 }
 
 - (IBAction)newWindowForTab:(id)sender

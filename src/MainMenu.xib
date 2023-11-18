@@ -729,7 +729,7 @@
                             <menuItem isSeparatorItem="YES" id="581"/>
                             <menuItem title="Reload Page" keyEquivalent="r" id="579">
                                 <connections>
-                                    <action selector="reload:" target="-1" id="582"/>
+                                    <action selector="performReload:" target="-1" id="582"/>
                                 </connections>
                             </menuItem>
                         </items>

@@ -83,7 +83,7 @@
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <action selector="reload:" target="-2" id="35"/>
+                                <action selector="performReload:" target="-2" id="35"/>
                             </connections>
                         </button>
                     </toolbarItem>

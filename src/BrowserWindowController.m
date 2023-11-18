@@ -177,7 +177,7 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
 - (IBAction)openLocation:(id)sender
 {
-    [[self window] makeFirstResponder:_urlText];
+    [[self window] makeFirstResponder:urlText];
 }
 
 - (BOOL)hasProtocol:(NSString *)address
@@ -374,7 +374,7 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 {
     SettingsController *settingsController = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
     _webView.customUserAgent = settingsController.customUserAgent;
-    [_webView reload];
+    [self performReload:nil];
 }
 
 - (BOOL)appearsToBeADomain:(NSURLComponents *)components
@@ -392,21 +392,21 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
 - (IBAction)fetch:(id)sender
 {
-    NSURLComponents *components = [NSURLComponents componentsWithString:_urlText.stringValue];
+    NSURLComponents *components = [NSURLComponents componentsWithString:urlText.stringValue];
     if (!components || (!components.host && !components.scheme)) {
-        NSString *URLWithScheme = [NSString stringWithFormat:@"https://%@", _urlText.stringValue];
+        NSString *URLWithScheme = [NSString stringWithFormat:@"https://%@", urlText.stringValue];
         NSURLComponents *componentsWithScheme = [NSURLComponents componentsWithString:URLWithScheme];
         if ([self appearsToBeADomain:componentsWithScheme])
-            [_urlText setStringValue:componentsWithScheme.string];
+            [urlText setStringValue:componentsWithScheme.string];
         else {
             NSString *baseURL = @"https://duckduckgo.com/?q=";
             NSCharacterSet *queryAllowedCharacters = [NSCharacterSet characterSetWithCharactersInString:@" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~"];
-            NSString *queryParameter = [_urlText.stringValue stringByAddingPercentEncodingWithAllowedCharacters:queryAllowedCharacters];
+            NSString *queryParameter = [urlText.stringValue stringByAddingPercentEncodingWithAllowedCharacters:queryAllowedCharacters];
             queryParameter = [queryParameter stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-            [_urlText setStringValue:[baseURL stringByAppendingString:queryParameter]];
+            [urlText setStringValue:[baseURL stringByAppendingString:queryParameter]];
         }
     }
-    NSURL *url = [NSURL _webkit_URLWithUserTypedString:_urlText.stringValue];
+    NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
     [_webView loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
@@ -519,8 +519,9 @@ static BOOL areEssentiallyEqual(double a, double b)
     return YES;
 }
 
-- (IBAction)reload:(id)sender
+- (IBAction)performReload:(id)sender
 {
+    [self updateTextFieldFromURL:_webView.URL];
     [_webView reload];
 }
 
@@ -930,7 +931,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (!URL.absoluteString.length)
         return;
 
-    _urlText.stringValue = [URL _web_userVisibleString];
+    urlText.stringValue = [URL _web_userVisibleString];
 }
 
 - (void)updateLockButtonIcon:(BOOL)hasOnlySecureContent
@@ -944,7 +945,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (void)loadURLString:(NSString *)urlString
 {
     // FIXME: We shouldn't have to set the url text here.
-    [_urlText setStringValue:urlString];
+    [urlText setStringValue:urlString];
     [self fetch:nil];
 }
 
@@ -1099,7 +1100,7 @@ static BOOL isJavaScriptURL(NSURL *url)
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
     NSLog(@"WebContent process crashed; reloading");
-    [self reload:nil];
+    [self performReload:nil];
 }
 
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents

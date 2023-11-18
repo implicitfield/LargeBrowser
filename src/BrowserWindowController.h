@@ -42,11 +42,10 @@
     IBOutlet NSToolbar *toolbar;
     IBOutlet NSView *containerView;
     IBOutlet NSButton *toggleUseShrinkToFitButton;
+    @public IBOutlet ExtendedNSTextField *urlText;
 
     BOOL _zoomTextOnly;
 }
-
-@property (readwrite) IBOutlet ExtendedNSTextField *urlText;
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
@@ -61,7 +60,7 @@
 
 - (IBAction)fetch:(id)sender;
 - (IBAction)share:(id)sender;
-- (IBAction)reload:(id)sender;
+- (IBAction)performReload:(id)sender;
 - (IBAction)showCertificate:(id)sender;
 - (IBAction)forceRepaint:(id)sender;
 - (IBAction)goBack:(id)sender;
