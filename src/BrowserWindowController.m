@@ -144,7 +144,7 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 
 @end
 
-@interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate, NSTextFinderBarContainer, WKNavigationDelegate, WKUIDelegate, WKUIDelegatePrivate, _WKIconLoadingDelegate> {
+@interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate, NSTextFinderBarContainer, WKDownloadDelegate, WKNavigationDelegate, WKUIDelegate, WKUIDelegatePrivate, _WKIconLoadingDelegate> {
     NSTimer *_mainThreadStallTimer;
 }
 @end
@@ -1000,6 +1000,11 @@ static BOOL isJavaScriptURL(NSURL *url)
 {
     LOG(@"decidePolicyForNavigationAction");
 
+    if (navigationAction.shouldPerformDownload) {
+        decisionHandler(WKNavigationActionPolicyDownload);
+        return;
+    }
+
     if (navigationAction.buttonNumber == 1 && (navigationAction.modifierFlags & (NSEventModifierFlagCommand | NSEventModifierFlagShift)) != 0) {
         decisionHandler(WKNavigationActionPolicyCancel);
 
@@ -1033,7 +1038,16 @@ static BOOL isJavaScriptURL(NSURL *url)
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
     LOG(@"decidePolicyForNavigationResponse");
-    decisionHandler(WKNavigationResponsePolicyAllow);
+
+    if (navigationResponse.canShowMIMEType)
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    else
+        decisionHandler(WKNavigationResponsePolicyDownload);
+}
+
+- (void)webView:(WKWebView *)webView navigationAction:(WKNavigationAction *)navigationAction didBecomeDownload:(WKDownload *)download
+{
+    download.delegate = self;
 }
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
@@ -1126,6 +1140,33 @@ static BOOL isJavaScriptURL(NSURL *url)
     completionHandler(^void(NSData *data) {
         LOG(@"Icon URL %@ received icon data of length %u", parameters.url, (unsigned)data.length);
     });
+}
+
+#pragma mark WKDownloadDelegate
+
+- (void)download:(WKDownload *)download decideDestinationUsingResponse:(NSURLResponse *)response suggestedFilename:(NSString *)suggestedFilename completionHandler:(void (^)(NSURL *destination))completionHandler
+{
+    NSString *downloadsPath = [NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *filePath = [downloadsPath stringByAppendingPathComponent:suggestedFilename];
+    NSURL *url = [NSURL fileURLWithPath:filePath];
+
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    [alert setMessageText:[NSString stringWithFormat:@"Allow download from %@?", [response.URL absoluteString]]];
+
+    [alert addButtonWithTitle:@"Allow"];
+    [alert addButtonWithTitle:@"Cancel"];
+
+    [alert beginSheetModalForWindow:self.window completionHandler:^void(NSModalResponse response) {
+        if (response == NSAlertFirstButtonReturn)
+            completionHandler(url);
+        else
+            completionHandler(nil);
+    }];
+}
+
+- (void)downloadDidFinish:(WKDownload *)download
+{
 }
 
 #pragma mark Find in Page
