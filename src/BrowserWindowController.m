@@ -1050,6 +1050,11 @@ static BOOL isJavaScriptURL(NSURL *url)
     download.delegate = self;
 }
 
+- (void)webView:(WKWebView *)webView navigationResponse:(WKNavigationResponse *)navigationResponse didBecomeDownload:(WKDownload *)download
+{
+    download.delegate = self;
+}
+
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     LOG(@"didStartProvisionalNavigation: %@", navigation);
@@ -1167,6 +1172,12 @@ static BOOL isJavaScriptURL(NSURL *url)
 
 - (void)downloadDidFinish:(WKDownload *)download
 {
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    [alert setMessageText:[NSString stringWithFormat:@"Finished download from %@.", [download.originalRequest.URL absoluteString]]];
+    [alert addButtonWithTitle:@"OK"];
+
+    [alert beginSheetModalForWindow:self.window completionHandler:^void(NSModalResponse response) {}];
 }
 
 #pragma mark Find in Page
