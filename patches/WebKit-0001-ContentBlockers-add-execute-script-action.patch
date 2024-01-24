@@ -81,7 +81,7 @@
      if (actionType == "notify"_s) {
 --- a/Source/WebCore/contentextensions/ContentExtensionsBackend.cpp
 +++ b/Source/WebCore/contentextensions/ContentExtensionsBackend.cpp
-@@ -267,6 +267,13 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
+@@ -268,6 +268,13 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                      initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
                  else if (currentDocument)
                      currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
@@ -95,7 +95,7 @@
              }, [&](const NotifyAction& actionData) {
                  results.summary.hasNotifications = true;
                  result.notifications.append(actionData.string);
-@@ -345,6 +352,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
+@@ -346,6 +353,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
              }, [&](const BlockCookiesAction&) {
                  results.summary.blockedCookies = true;
              }, [&](const CSSDisplayNoneSelectorAction&) {
@@ -113,20 +113,20 @@
  #include "SecurityPolicy.h"
  #include "ServiceWorker.h"
  #include "ServiceWorkerClientData.h"
-@@ -1371,9 +1372,12 @@ void DocumentLoader::commitData(const SharedBuffer& data)
-         for (const auto& pendingSelector : pendingSelectorEntry.value)
-             extensionStyleSheets.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
+@@ -1351,8 +1352,12 @@ void DocumentLoader::commitData(const SharedBuffer& data)
+             for (const auto& pendingSelector : pendingSelectorEntry.value)
+                 extensionStyleSheets.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
+         }
++        for (auto& pendingScriptEntry : m_pendingContentExtensionScripts)
++            m_frame->script().evaluateIgnoringException(ScriptSourceCode { pendingScriptEntry.value, JSC::SourceTaintedOrigin::Untainted });
++
+         m_pendingNamedContentExtensionStyleSheets.clear();
+         m_pendingContentExtensionDisplayNoneSelectors.clear();
++        m_pendingContentExtensionScripts.clear();
      }
-+    for (auto& pendingScriptEntry : m_pendingContentExtensionScripts)
-+        m_frame->script().evaluateIgnoringException(ScriptSourceCode { pendingScriptEntry.value, JSC::SourceTaintedOrigin::Untainted });
- 
-     m_pendingNamedContentExtensionStyleSheets.clear();
-     m_pendingContentExtensionDisplayNoneSelectors.clear();
-+    m_pendingContentExtensionScripts.clear();
  #endif
  
-     ASSERT(m_frame->document()->parsing());
-@@ -2494,6 +2498,12 @@ void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String&
+@@ -2497,6 +2502,12 @@ void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String&
      auto addResult = m_pendingContentExtensionDisplayNoneSelectors.add(identifier, Vector<std::pair<String, uint32_t>>());
      addResult.iterator->value.append(std::make_pair(selector, selectorID));
  }
@@ -141,7 +141,7 @@
  #if USE(QUICK_LOOK)
 --- a/Source/WebCore/loader/DocumentLoader.h
 +++ b/Source/WebCore/loader/DocumentLoader.h
-@@ -410,6 +410,7 @@ public:
+@@ -414,6 +414,7 @@ public:
  #if ENABLE(CONTENT_EXTENSIONS)
      void addPendingContentExtensionSheet(const String& identifier, StyleSheetContents&);
      void addPendingContentExtensionDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID);
@@ -149,7 +149,7 @@
  #endif
  
      void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
-@@ -679,6 +680,7 @@ private:
+@@ -685,6 +686,7 @@ private:
  #if ENABLE(CONTENT_EXTENSIONS)
      MemoryCompactRobinHoodHashMap<String, RefPtr<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
      MemoryCompactRobinHoodHashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
