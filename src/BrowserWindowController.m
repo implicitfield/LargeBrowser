@@ -170,6 +170,13 @@ static enum ContextualMenuAction contextualMenuAction = CMAInvalid;
 {
     self.window.toolbarStyle = NSWindowToolbarStyleExpanded;
 
+    NSString *sizeString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WindowSize"];
+    if (sizeString) {
+        NSSize size = NSSizeFromString(sizeString);
+        if (size.width && size.height)
+            [self.window setContentSize:size];
+    }
+
     [share sendActionOn:NSEventMaskLeftMouseDown];
 
     [super windowDidLoad];
